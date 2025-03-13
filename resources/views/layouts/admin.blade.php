@@ -82,10 +82,10 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <h3>Lilik Net</h3>
-        <a href="#" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
+        <a href="{{ route('beranda_admin') }}" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
         <a href="#"><i class="fas fa-cogs me-2"></i>Setting</a>
         <a href="#"><i class="fas fa-users me-2"></i>Pengguna</a>
-        <a href="#"><i class="fas fa-box me-2"></i>Data Paket</a>
+        <a href="{{ route('paket.index') }}"><i class="fas fa-box me-2"></i>Data Paket</a>
         <a href="#"><i class="fas fa-user me-2"></i>Data Pelanggan</a>
         <a href="#"><i class="fas fa-arrow-down me-2"></i>Kas Masuk</a>
         <a href="#"><i class="fas fa-arrow-up me-2"></i>Kas Keluar</a>
@@ -104,8 +104,7 @@
     
     <!-- Content Area -->
     <div class="content">
-        <h2>Dashboard</h2>
-        <p>Selamat datang di halaman admin.</p>
+        @yield('content') <!-- Bagian ini akan diisi oleh halaman lain -->
     </div>
     
     <!-- Footer -->
