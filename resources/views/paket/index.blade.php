@@ -1,5 +1,8 @@
 @extends('layouts.admin')
 
+@section('title', 'Data Paket')
+@section('dashboard_active', 'active')
+
 @section('content')
 <div class="container">
     <h2>Data Paket</h2>
@@ -25,7 +28,7 @@
                 <td>Rp {{ number_format($paket->harga, 0, ',', '.') }}</td>
                 <td>{{ $paket->kategori }}</td>
                 <td>
-                    <a href="{{ route('paket.edit', $paket->id) }}" class="btn btn-info">Ubah</a>
+                    <a href="{{ route('paket.edit', $paket->id) }}" class="btn btn-warning">Edit</a>
                     <form action="{{ route('paket.destroy', $paket->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')

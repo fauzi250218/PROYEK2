@@ -3,113 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>@yield('title', 'Admin Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background-color: #f0f4f8;
-        }
+        /* Styling Sidebar */
         .sidebar {
-            width: 250px;
+            width: 220px;
             background: #2c3e50;
             color: white;
-            padding: 20px;
+            padding: 15px;
             position: fixed;
             height: 100vh;
+            overflow-y: auto;
         }
         .sidebar h3 {
             text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
+            font-size: 18px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
         .sidebar a {
-            display: block;
-            padding: 12px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            font-size: 14px;
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             transition: 0.3s;
-            font-size: 16px;
         }
-        .sidebar a:hover, .sidebar a.active {
+        .sidebar a.active, .sidebar a:hover {
             background: rgba(255, 255, 255, 0.2);
         }
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-            flex-grow: 1;
+        .dropdown-container {
+            display: none;
+            padding-left: 20px;
         }
         .navbar {
-            margin-left: 250px;
-            background: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 20px;
+            padding: 15px;
+            background: white;
+            color: black;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-left: 220px;
         }
-        .navbar h4 {
-            color: #34495e;
-            font-weight: bold;
-        }
-        .navbar .btn-danger {
-            background: #dc3545;
-            border: none;
-            transition: 0.3s;
-        }
-        .navbar .btn-danger:hover {
-            background: #bb2d3b;
-        }
-        .footer {
-            margin-left: 250px;
-            background: #34495e;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            position: fixed;
-            bottom: 0;
-            width: calc(100% - 250px);
-            font-size: 14px;
+        .content {
+            margin-left: 220px;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <div class="sidebar">
         <h3>Lilik Net</h3>
-        <a href="{{ route('beranda_admin') }}" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
-        <a href="#"><i class="fas fa-cogs me-2"></i>Setting</a>
-        <a href="#"><i class="fas fa-users me-2"></i>Pengguna</a>
-        <a href="{{ route('paket.index') }}"><i class="fas fa-box me-2"></i>Data Paket</a>
-        <a href="#"><i class="fas fa-user me-2"></i>Data Pelanggan</a>
-        <a href="#"><i class="fas fa-arrow-down me-2"></i>Kas Masuk</a>
-        <a href="#"><i class="fas fa-arrow-up me-2"></i>Kas Keluar</a>
-        <a href="#"><i class="fas fa-money-bill me-2"></i>Transaksi Pembayaran</a>
-        <a href="#"><i class="fas fa-file-alt me-2"></i>Laporan Kas</a>
-    </div>
-    
+
+        <!-- Ikon Admin & Nama -->
+        <div class="admin-profile text-center my-3">
+            <i class="fas fa-user-circle fa-3x"></i>
+            <p class="mt-2 mb-0">Admin</p>
+            <small class="text-light">Administrator</small>
+        </div>
+
+        <a href="{{ route('beranda_admin') }}" class="menu-link {{ request()->routeIs('beranda_admin') ? 'active' : '' }}" data-title="Dashboard">
+            <i class="fas fa-home me-2"></i>Dashboard
+        </a>
+
+        <a href="" class="menu-link" data-title="Setting">
+            <i class="fas fa-cogs me-2"></i>Setting
+        </a>
+
+        <a href="" class="menu-link" data-title="Pengguna">
+            <i class="fas fa-users me-2"></i>Pengguna
+        </a>
+
+        <!-- Dropdown Data Master -->
+        <a class="dropdown-toggle">
+            <span><i class="fas fa-database me-2"></i>Data Master</span>
+        </a>
+        <div class="dropdown-container">
+            <a href="{{ route('paket.index') }}" class="menu-link {{ request()->routeIs('paket.index') ? 'active' : '' }}" data-title="Data Paket">
+                <i class="fas fa-box me-2"></i>Data Paket
+            </a>
+            <a href="" class="menu-link" data-title="Data Pelanggan">
+                <i class="fas fa-users me-2"></i>Data Pelanggan
+            </a>
+        </div>
+
+        <a href="" class="menu-link" data-title="Kas Masuk dan Keluar">
+            <i class="fas fa-exchange-alt me-2"></i>Kas Masuk dan Keluar
+        </a>
+
+        <a href="" class="menu-link" data-title="Transaksi Pembayaran">
+            <i class="fas fa-money-bill-wave me-2"></i>Transaksi Pembayaran
+        </a>
+
+        <a href="" class="menu-link" data-title="Laporan Kas">
+            <i class="fas fa-file-alt me-2"></i>Laporan Kas Masuk dan Keluar
+        </a>
+    </div>    
+
     <!-- Navbar -->
     <nav class="navbar">
-        <h4>Admin Dashboard</h4>
+        <h4 id="navbar-title">Dashboard</h4>
         <div>
-            <span class="me-3">Admin</span>
-            <a href="#" class="btn btn-danger btn-sm">Logout</a>
+            <span class="me-2">Admin</span>
+            <a href="" class="btn btn-danger btn-sm">Logout</a>
         </div>
     </nav>
-    
-    <!-- Content Area -->
+
     <div class="content">
-        @yield('content') <!-- Bagian ini akan diisi oleh halaman lain -->
+        @yield('content')
     </div>
-    
-    <!-- Footer -->
-    <footer class="footer">
+
+    <footer class="footer text-center mt-4">
         &copy; 2025 LILIK NET | All Rights Reserved
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebarLinks = document.querySelectorAll(".menu-link");
+            const navbarTitle = document.getElementById("navbar-title");
+
+            // Ambil status menu aktif dari local storage
+            const activeMenu = localStorage.getItem("activeMenu");
+
+            if (activeMenu) {
+                navbarTitle.textContent = activeMenu;
+            }
+
+            // Event listener untuk mengganti navbar title tanpa menghalangi navigasi
+            sidebarLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    const selectedTitle = this.getAttribute("data-title");
+
+                    // Ganti judul navbar
+                    navbarTitle.textContent = selectedTitle;
+
+                    // Simpan menu aktif ke local storage
+                    localStorage.setItem("activeMenu", selectedTitle);
+                });
+            });
+
+            // Dropdown toggle
+            const dropdownToggle = document.querySelector(".dropdown-toggle");
+            const dropdownContainer = document.querySelector(".dropdown-container");
+
+            dropdownToggle.addEventListener("click", function (event) {
+                event.preventDefault();
+                dropdownContainer.style.display = (dropdownContainer.style.display === "block") ? "none" : "block";
+            });
+        });
+    </script>
 </body>
 </html>

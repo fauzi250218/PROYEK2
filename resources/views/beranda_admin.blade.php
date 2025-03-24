@@ -1,47 +1,51 @@
 @extends('layouts.admin')
 
+@section('title', 'Dashboard')
+@section('dashboard_active', 'active')
+
 @section('content')
 <div class="container mt-4">
-    <h2>Dashboard Admin</h2>
-    <p>Selamat datang di halaman admin LILIK NET.</p>
-
-    <div class="row mt-4">
-        <!-- Pemasukan -->
+    <div class="row mt-3">
+        <!-- Kartu Pemasukan -->
         <div class="col-md-3">
-            <div class="card text-white bg-success shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Total Pemasukan</h5>
-                    <h3>Rp 15,000,000</h3>
+            <div class="card shadow-sm border-0 rounded-lg bg-success text-white">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-wallet fa-2x mb-2"></i>
+                    <h6 class="fw-semibold">Total Pemasukan</h6>
+                    <h5 class="fw-bold">Rp 15,000,000</h5>
                 </div>
             </div>
         </div>
 
-        <!-- Pengeluaran -->
+        <!-- Kartu Pengeluaran -->
         <div class="col-md-3">
-            <div class="card text-white bg-danger shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Total Pengeluaran</h5>
-                    <h3>Rp 5,500,000</h3>
+            <div class="card shadow-sm border-0 rounded-lg bg-danger text-white">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-money-bill-wave fa-2x mb-2"></i>
+                    <h6 class="fw-semibold">Total Pengeluaran</h6>
+                    <h5 class="fw-bold">Rp 5,500,000</h5>
                 </div>
             </div>
         </div>
 
-        <!-- Saldo -->
+        <!-- Kartu Saldo -->
         <div class="col-md-3">
-            <div class="card text-white bg-primary shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Saldo Saat Ini</h5>
-                    <h3>Rp 9,500,000</h3>
+            <div class="card shadow-sm border-0 rounded-lg bg-primary text-white">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-piggy-bank fa-2x mb-2"></i>
+                    <h6 class="fw-semibold">Saldo Saat Ini</h6>
+                    <h5 class="fw-bold">Rp 9,500,000</h5>
                 </div>
             </div>
         </div>
 
-        <!-- Jumlah Transaksi -->
+        <!-- Kartu Jumlah Transaksi -->
         <div class="col-md-3">
-            <div class="card text-white bg-warning shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Jumlah Transaksi</h5>
-                    <h3>120</h3>
+            <div class="card shadow-sm border-0 rounded-lg bg-warning text-dark">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                    <h6 class="fw-semibold">Jumlah Transaksi</h6>
+                    <h5 class="fw-bold">120</h5>
                 </div>
             </div>
         </div>
