@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaketController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PenggunaController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,10 @@ Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.s
 Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
 Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
 Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+Route::get('/pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
+Route::get('/pelanggan/create', [PelangganController::class, 'create'])->name('pelanggan.create');
+Route::post('/pelanggan', [PelangganController::class, 'store'])->name('pelanggan.store');
+Route::get('/pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
+Route::put('/pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
 

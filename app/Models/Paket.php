@@ -9,5 +9,7 @@ class Paket extends Model
 {
     use HasFactory;
 
+    protected $table = 'data_paket';
+
     protected $fillable = ['nama_paket', 'kecepatan', 'harga', 'kategori'];
 }

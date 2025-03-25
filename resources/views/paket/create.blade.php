@@ -5,9 +5,23 @@
     <h2>Tambah Paket</h2>
     <form action="{{ route('paket.store') }}" method="POST">
         @csrf
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <div class="mb-3">
             <label>Nama Paket</label>
-            <input type="text" name="nama_paket" class="form-control" required>
+            <select name="nama_paket" class="form-control" required>
+                <option value="">Pilih Paket</option>
+                <option value="Paket Murah">Paket Murah</option>
+                <option value="Paket Menengah">Paket Menengah</option>
+                <option value="Paket Mewah">Paket Mewah</option>
+            </select>
         </div>
         <div class="mb-3">
             <label>Kecepatan (Mbps)</label>

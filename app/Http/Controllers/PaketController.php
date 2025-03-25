@@ -35,29 +35,39 @@ class PaketController extends Controller
         return redirect()->route('paket.index')->with('success', 'Paket berhasil ditambahkan!');
     }
 
-    public function edit(Paket $paket)
+    public function edit($id)
     {
-        $user = Auth::user(); // Tambahkan user
+        $user = Auth::user();
+        $paket = Paket::findOrFail($id); // Pastikan paket ditemukan
+    
         return view('paket.edit', compact('paket', 'user'));
-    }
+    }    
 
-    public function update(Request $request, Paket $paket)
-    {
-        $request->validate([
-            'nama_paket' => 'required',
-            'kecepatan' => 'required|integer',
-            'harga' => 'required|integer',
-            'kategori' => 'required'
-        ]);
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'nama_paket' => 'required',
+        'kecepatan' => 'required|numeric',
+        'harga' => 'required|numeric',
+        'kategori' => 'required',
+    ]);
 
-        $paket->update($request->all());
+    $paket = Paket::findOrFail($id);
+    $paket->update([
+        'nama_paket' => $request->nama_paket,
+        'kecepatan' => $request->kecepatan,
+        'harga' => $request->harga,
+        'kategori' => $request->kategori,
+    ]);
 
-        return redirect()->route('paket.index')->with('success', 'Paket berhasil diperbarui!');
-    }
+    return redirect()->route('paket.index')->with('success', 'Paket berhasil diperbarui.');
+}
 
-    public function destroy(Paket $paket)
-    {
-        $paket->delete();
-        return redirect()->route('paket.index')->with('success', 'Paket berhasil dihapus!');
-    }
+public function destroy($id)
+{
+    $paket = Paket::findOrFail($id);
+    $paket->delete();
+
+    return redirect()->route('paket.index')->with('success', 'Paket berhasil dihapus.');
+}
 }

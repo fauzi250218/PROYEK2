@@ -17,8 +17,11 @@
         </div>
         <div class="mb-3">
             <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Minimal 6 karakter" required>
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>           
         <div class="mb-3">
             <label>Level</label>
             <select name="level" class="form-control" required>

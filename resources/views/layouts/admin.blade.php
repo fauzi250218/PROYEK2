@@ -96,7 +96,7 @@
             <a href="{{ route('paket.index') }}" class="menu-link {{ request()->routeIs('paket.index') ? 'active' : '' }}" data-title="Data Paket">
                 <i class="fas fa-box me-2"></i>Data Paket
             </a>
-            <a href="" class="menu-link" data-title="Data Pelanggan">
+            <a href="{{ route('pelanggan.index') }}" class="menu-link" data-title="Data Pelanggan">
                 <i class="fas fa-users me-2"></i>Data Pelanggan
             </a>
         </div>

@@ -3,12 +3,26 @@
 @section('content')
 <div class="container">
     <h2>Edit Paket</h2>
-    <form action="{{ route('paket.edit', $paket->id) }}" method="POST">
+    <form action="{{ route('paket.update', $paket->id) }}" method="POST">
         @csrf
-        @method('PUT')
+        @method('PUT')    
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <div class="mb-3">
             <label>Nama Paket</label>
-            <input type="text" name="nama_paket" class="form-control" value="{{ $paket->nama_paket }}" required>
+            <select name="nama_paket" class="form-control" required>
+                <option value="">Pilih Paket</option>
+                <option value="Paket Murah" {{ $paket->nama_paket == 'Paket Murah' ? 'selected' : '' }}>Paket Murah</option>
+                <option value="Paket Menengah" {{ $paket->nama_paket == 'Paket Menengah' ? 'selected' : '' }}>Paket Menengah</option>
+                <option value="Paket Mewah" {{ $paket->nama_paket == 'Paket Mewah' ? 'selected' : '' }}>Paket Mewah</option>
+            </select>
         </div>
         <div class="mb-3">
             <label>Kecepatan (Mbps)</label>

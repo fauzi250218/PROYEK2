@@ -12,12 +12,12 @@ class PenggunaController extends Controller
     {
         $user = Auth::user();
         $users = Users::all();
-        return view('layouts.pengguna.index', compact('users', 'user'));
+        return view('pengguna.index', compact('users', 'user'));
     }
 
     public function create()
     {
-        return view('layouts.pengguna.create');
+        return view('pengguna.create');
     }
 
     public function store(Request $request)
@@ -42,7 +42,7 @@ class PenggunaController extends Controller
     public function edit($id)
     {
         $user = Users::findOrFail($id);
-        return view('layouts.pengguna.edit', compact('user'));
+        return view('pengguna.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
