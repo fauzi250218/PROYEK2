@@ -61,13 +61,19 @@
 </head>
 <body>
     <div class="sidebar">
-        <h3>Lilik Net</h3>
+        <h3>Lilik.Net</h3>
 
         <!-- Ikon Admin & Nama -->
         <div class="admin-profile text-center my-3">
             <i class="fas fa-user-circle fa-3x"></i>
-            <p class="mt-2 mb-0">Admin</p>
-            <small class="text-light">Administrator</small>
+            <p class="mt-2 mb-0">{{ Auth::user()->nama_user }}</p>
+            <small class="text-light">
+                @if (Auth::check() && Auth::user()->level == 'admin')
+                    Administrator
+                @elseif (Auth::check())
+                    Pelanggan
+                @endif
+            </small>                          
         </div>
 
         <a href="{{ route('beranda_admin') }}" class="menu-link {{ request()->routeIs('beranda_admin') ? 'active' : '' }}" data-title="Dashboard">
@@ -78,7 +84,7 @@
             <i class="fas fa-cogs me-2"></i>Setting
         </a>
 
-        <a href="" class="menu-link" data-title="Pengguna">
+        <a href="{{ route('pengguna.index') }}" class="menu-link" data-title="Pengguna">
             <i class="fas fa-users me-2"></i>Pengguna
         </a>
 
@@ -112,8 +118,11 @@
     <nav class="navbar">
         <h4 id="navbar-title">Dashboard</h4>
         <div>
-            <span class="me-2">Admin</span>
-            <a href="" class="btn btn-danger btn-sm">Logout</a>
+            <span class="me-2">{{ Auth::user()->username }}</span>
+            <form id="logout-form" action="{{ route('logout_admin') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>            
         </div>
     </nav>
 
@@ -122,7 +131,7 @@
     </div>
 
     <footer class="footer text-center mt-4">
-        &copy; 2025 LILIK NET | All Rights Reserved
+        &copy; 2025 LILIK.NET | All Rights Reserved
     </footer>
 
     <script>

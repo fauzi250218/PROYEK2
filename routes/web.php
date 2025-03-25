@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaketController;
+use App\Http\Controllers\PenggunaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login_admin');
 });
 
 Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login_admin');
@@ -18,4 +19,10 @@ Route::post('/paket', [PaketController::class, 'store'])->name('paket.store');
 Route::get('/paket/{id}/edit', [PaketController::class, 'edit'])->name('paket.edit');
 Route::put('/paket/{id}', [PaketController::class, 'update'])->name('paket.update');
 Route::delete('/paket/{id}', [PaketController::class, 'destroy'])->name('paket.destroy');
+Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+Route::get('/pengguna/create', [PenggunaController::class, 'create'])->name('pengguna.create');
+Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
+Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
+Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
+Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
