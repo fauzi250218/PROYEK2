@@ -68,12 +68,12 @@
             <i class="fas fa-user-circle fa-3x"></i>
             <p class="mt-2 mb-0">{{ Auth::user()->nama_user }}</p>
             <small class="text-light">
-                @if ($user->level == 'admin')
+                @if (Auth::check() && Auth::user()->level == 'admin')
                     Administrator
-                @else
+                @elseif (Auth::check())
                     Pelanggan
                 @endif
-            </small>            
+            </small>                          
         </div>
 
         <a href="{{ route('beranda_admin') }}" class="menu-link {{ request()->routeIs('beranda_admin') ? 'active' : '' }}" data-title="Dashboard">
