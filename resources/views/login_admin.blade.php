@@ -81,7 +81,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm w-100">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="#">LILIK NET</a>
+            <a class="navbar-brand fw-bold text-primary" href="#">LILIK.NET</a>
         </div>
     </nav>
 
@@ -92,7 +92,10 @@
             <p class="text-muted">Solusi Internet Murah dan Cepat</p>
             
             @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             @endif
     
             <form method="POST" action="{{ route('login_admin') }}">

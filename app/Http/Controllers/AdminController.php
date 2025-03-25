@@ -14,32 +14,34 @@ class AdminController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'username' => 'required',
+        'password' => 'required',
+    ]);
 
-        $credentials = $request->only('username', 'password');
+    $credentials = $request->only('username', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
 
-            if ($user->level === 'admin') {
-                return redirect()->route('beranda_admin');
-            }
-
-            Auth::logout(); // Logout jika bukan admin
+        // Hanya izinkan admin untuk masuk
+        if ($user->level !== 'admin') {
+            Auth::logout(); // Langsung logout jika bukan admin
+            return back()->with('error', 'Anda tidak memiliki akses sebagai admin.');
         }
 
-        return back()->withErrors(['login' => 'Username atau password salah']);
+        return redirect()->route('beranda_admin');
     }
 
+    return back()->with('error', 'Nama pengguna atau kata sandi salah.');
+}
     public function showBeranda()
     {
-        return view('beranda_admin');
+        $user = Auth::user();
+        return view('beranda_admin', compact('user'));
     }
-
+    
     public function logout()
     {
         Auth::logout();
