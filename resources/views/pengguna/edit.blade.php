@@ -25,8 +25,11 @@
         </div>
         <div class="mb-3">
             <label>Password (kosongkan jika tidak ingin mengubah)</label>
-            <input type="password" name="password" class="form-control">
-        </div>        
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Minimal 6 karakter">
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>               
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
 </div>

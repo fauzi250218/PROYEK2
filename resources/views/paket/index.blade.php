@@ -7,7 +7,11 @@
 <div class="container">
     <h2>Data Paket</h2>
     <a href="{{ route('paket.create') }}" class="btn btn-primary">Tambah</a>
-
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <table class="table mt-3">
         <thead>
             <tr>
