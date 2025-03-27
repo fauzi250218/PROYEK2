@@ -45,20 +45,6 @@
         .btn-custom:hover {
             background-color: #0056b3;
         }
-        .footer {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        .footer a {
-            color: #007bff;
-            margin: 0 10px;
-            font-size: 24px;
-            transition: transform 0.3s;
-        }
-        .footer a:hover {
-            transform: scale(1.2);
-        }
         .password-container {
             position: relative;
             display: flex;
@@ -75,13 +61,39 @@
             color: #007bff;
             font-size: 18px;
         }
+
+        /* Navbar */
+        .navbar {
+            background: #00aaff !important; /* Biru Laut */
+            padding: 10px 0;
+        }
+        .navbar-brand {
+            color: white !important; /* Warna teks putih */
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background: #00aaff !important; /* Biru Laut */
+            padding: 15px 0;
+        }
+        .footer a {
+            color: white !important; /* Warna ikon jadi putih */
+            font-size: 24px; /* Ukuran ikon */
+            margin: 0 10px;
+            transition: transform 0.3s;
+        }
+        .footer a:hover {
+            transform: scale(1.2);
+        }
+
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm w-100">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm w-100">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="#">LILIK.NET</a>
+            <a class="navbar-brand" href="#">LILIK.NET</a>
         </div>
     </nav>
 
@@ -117,11 +129,11 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white py-3 w-100 text-center shadow-sm">
+    <footer class="footer text-center shadow-sm w-100">
         <div class="container">
-            <a href="#" class="text-primary me-3"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href="#" class="text-primary me-3"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" class="text-primary"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#" class="me-2"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#" class="me-2"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
         </div>
     </footer>
 

@@ -16,6 +16,7 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th>Foto</th>
                 <th>Nama Pengguna</th>
                 <th>Username</th>
                 <th>Level</th>
@@ -26,6 +27,13 @@
             @foreach ($users as $index => $user)
             <tr>
                 <td>{{ $index + 1 }}</td>
+                <td>
+                    @if ($user->foto)
+                        <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto" width="50" height="50" class="rounded-circle">
+                    @else
+                        <i class="fas fa-user-circle fa-2x"></i>
+                    @endif
+                </td>
                 <td>{{ $user->nama_user }}</td>
                 <td>{{ $user->username }}</td>
                 <td>{{ ucfirst($user->level) }}</td>
