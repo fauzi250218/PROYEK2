@@ -8,13 +8,24 @@ use Illuminate\Support\Facades\Auth;
 
 class PenggunaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $users = Users::all();
+        $search = $request->input('search');
+    
+        $users = Users::query()
+            ->when($search, function ($query, $search) {
+                $query->where('nama_user', 'like', "%{$search}%")
+                      ->orWhere('username', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('level', 'like', "%{$search}%");
+            })
+            ->paginate(5)
+            ->withQueryString(); // agar search tetap saat pindah halaman
+    
         return view('pengguna.index', compact('users', 'user'));
     }
-
+    
     public function create()
     {
         return view('pengguna.create');

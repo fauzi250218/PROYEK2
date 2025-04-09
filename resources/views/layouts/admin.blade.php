@@ -6,6 +6,7 @@
     <title>@yield('title', 'Admin Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     <style>
@@ -135,7 +136,7 @@
             </a>
     
             <a href="" class="menu-link">
-                <i class="fas fa-money-bill-wave me-2"></i>Transaksi Pembayaran
+                <i class="fas fa-money-bill-wave me-2"></i>Data Tagihan
             </a>
     
             <!-- Pindahin Laporan Kas Masuk dan Keluar di sini -->
