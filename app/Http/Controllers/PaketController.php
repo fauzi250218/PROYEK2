@@ -8,13 +8,21 @@ use Illuminate\Support\Facades\Auth; // Tambahkan Auth
 
 class PaketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user(); // Ambil data user yang login
-        $pakets = Paket::all();
+        $user = Auth::user();
+        $search = $request->input('search');
+    
+        // Filter data paket berdasarkan pencarian
+        $pakets = Paket::when($search, function ($query, $search) {
+            return $query->where('nama_paket', 'like', "%{$search}%")
+                         ->orWhere('kecepatan', 'like', "%{$search}%")
+                         ->orWhere('harga', 'like', "%{$search}%")
+                         ->orWhere('kategori', 'like', "%{$search}%");
+        })->paginate(5)->withQueryString(); // ✅ Tetap bawa query pencarian saat pindah halaman
+    
         return view('paket.index', compact('pakets', 'user'));
-    }
-
+    }    
     public function create()
     {
         $user = Auth::user(); // Pastikan user dikirim ke view

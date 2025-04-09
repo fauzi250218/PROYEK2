@@ -29,8 +29,8 @@ class Users extends Authenticatable
         'password',
     ];
 
-        public function pelanggan()
+    public function pelanggan()
     {
-        return $this->belongsTo(Pelanggan::class, 'id_pelanggan', 'id_pelanggan');
-    }
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+    }    
 }

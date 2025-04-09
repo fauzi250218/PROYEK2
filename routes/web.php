@@ -32,4 +32,4 @@ Route::post('/pelanggan', [PelangganController::class, 'store'])->name('pelangga
 Route::get('/pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
 Route::put('/pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
 Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
-
+Route::get('/sinkron', [PelangganController::class, 'sinkronDataLama']);

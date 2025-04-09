@@ -1,57 +1,71 @@
 @extends('layouts.admin')
-
 @section('title', 'Data Pelanggan')
-@section('dashboard_active', 'active')
 
 @section('content')
-<div class="container">
-    <h2>Data Pelanggan</h2>
-    <a href="{{ route('pelanggan.create') }}" class="btn btn-primary">Tambah Pelanggan</a>
+<h2>Data Pelanggan</h2>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+<form action="{{ route('pelanggan.index') }}" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pelanggan..." class="form-control" />
+        <button type="submit" class="btn btn-primary">Cari</button>
+    </div>
+</form>    
 
-    <table class="table mt-3">
-        <thead>
+<a href="{{ route('pelanggan.create') }}" class="btn btn-primary mb-3">Tambah Pelanggan</a>
+
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+@if(request('search'))
+    <div class="alert alert-info">Menampilkan hasil untuk: <strong>{{ request('search') }}</strong></div>
+@endif
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama Pelanggan</th>
+            <th>Username</th>
+            <th>Alamat</th>
+            <th>No. Telepon</th>
+            <th>Paket</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($pelanggan as $index => $p)
             <tr>
-                <th>No</th>
-                <th>Nama Pelanggan</th>
-                <th>Username</th>
-                <th>Alamat</th>
-                <th>No. Telepon</th>
-                <th>Paket</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($pelanggan as $index => $p)
-            <tr>
-                <td>{{ $index + 1 }}</td>
+                <td>{{ $pelanggan->firstItem() + $index }}</td>
                 <td>{{ $p->nama_user }}</td>
                 <td>{{ $p->username }}</td>
-                <td>{{ optional($p->pelanggan)->alamat ?? '-' }}</td>
-                <td>{{ optional($p->pelanggan)->no_telp ?? '-' }}</td>
-                <td>{{ optional($p->pelanggan)->paket ?? '-' }}</td>
+                <td>{{ $p->pelanggan->alamat ?? '-' }}</td>
+                <td>{{ $p->pelanggan->no_telp ?? '-' }}</td>
+                <td>{{ $p->pelanggan->paket->nama_paket ?? '-' }}</td>
+                <td>{{ $p->pelanggan->paket->harga ?? '-' }}</td>                                                         
                 <td>
-                    @if ($p->pelanggan)
-                        <a href="{{ route('pelanggan.edit', $p->id_pelanggan) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ route('pelanggan.destroy', $p->id_pelanggan) }}" method="POST" style="display:inline;">
+                    @if($p->pelanggan)
+                        <a href="{{ route('pelanggan.edit', $p->pelanggan->id_pelanggan) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="{{ route('pelanggan.destroy', $p->pelanggan->id_pelanggan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pelanggan ini?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus pelanggan ini?');">Hapus</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                         </form>
                     @else
-                        Tidak ada data
+                        <span class="text-muted">Data tidak lengkap</span>
                     @endif
-                </td>                
+                </td>
             </tr>
-            @empty
+        @empty
             <tr>
-                <td colspan="7" class="text-center">Tidak ada data pelanggan</td>
+                <td colspan="8" class="text-center">Tidak ada data pelanggan.</td>
             </tr>
-            @endforelse
-        </tbody>
-    </table>
+        @endforelse
+    </tbody>
+</table>
+
+<div class="mt-3">
+    {{ $pelanggan->links() }}
 </div>
 @endsection

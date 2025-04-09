@@ -6,48 +6,72 @@
 @section('content')
 <div class="container">
     <h2>Data Pengguna</h2>
-    <a href="{{ route('pengguna.create') }}" class="btn btn-primary">Tambah Pengguna</a>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    <!-- Form Pencarian -->
+    <form action="{{ route('pengguna.index') }}" method="GET" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Cari pengguna...">
+            <button class="btn btn-primary" type="submit">Cari</button>
+        </div>
+    </form>
+
+    @if(request('search'))
+        <div class="alert alert-info">
+            Menampilkan hasil pencarian untuk: <strong>{{ request('search') }}</strong>
+        </div>
     @endif
 
-    <table class="table mt-3">
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">Tambah Pengguna</a>
+
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Foto</th>
-                <th>Nama Pengguna</th>
+                <th>Nama User</th>
                 <th>Username</th>
                 <th>Level</th>
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $index => $user)
+            @forelse ($users as $index => $u)
             <tr>
-                <td>{{ $index + 1 }}</td>
+                <td>{{ $users->firstItem() + $index }}</td>
+                <td>{{ $u->nama_user }}</td>
+                <td>{{ $u->username }}</td>
+                <td>{{ $u->level }}</td>
                 <td>
-                    @if ($user->foto)
-                        <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto" width="50" height="50" class="rounded-circle">
-                    @else
-                        <i class="fas fa-user-circle fa-2x"></i>
-                    @endif
-                </td>
-                <td>{{ $user->nama_user }}</td>
-                <td>{{ $user->username }}</td>
-                <td>{{ ucfirst($user->level) }}</td>
-                <td>
-                    <a href="{{ route('pengguna.edit', $user->id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('pengguna.destroy', $user->id) }}" method="POST" style="display:inline;">
+                    <a href="{{ route('pengguna.edit', $u->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ route('pengguna.destroy', $u->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus pengguna ini?');">Hapus</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                     </form>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Tidak ada data pengguna</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="mt-3">
+        {{ $users->links() }}
+    </div>
 </div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Apakah Anda yakin ingin menghapus pengguna ini?");
+    }
+</script>
 @endsection

@@ -16,17 +16,20 @@ class Pelanggan extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'id_pelanggan',
         'nama_pelanggan',
         'alamat',
         'no_telp',
-        'paket',
+        'paket',  
     ];
 
     public function user()
     {
         return $this->hasOne(Users::class, 'id_pelanggan', 'id_pelanggan');
     }
+
+    public function paket()
+    {
+        return $this->belongsTo(Paket::class, 'paket', 'id'); 
+    }
+
 }
-
-
