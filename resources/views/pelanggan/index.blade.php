@@ -42,8 +42,8 @@
                 <td>{{ $p->username }}</td>
                 <td>{{ $p->pelanggan->alamat ?? '-' }}</td>
                 <td>{{ $p->pelanggan->no_telp ?? '-' }}</td>
-                <td>{{ $p->pelanggan->paket->nama_paket ?? '-' }}</td>
-                <td>{{ $p->pelanggan->paket->harga ?? '-' }}</td>                                                         
+                <td>{{ $p->pelanggan->data_paket->nama_paket ?? '-' }}</td>
+                <td>{{ $p->pelanggan->data_paket->harga ?? '-' }}</td>                                                         
                 <td>
                     @if($p->pelanggan)
                         <a href="{{ route('pelanggan.edit', $p->pelanggan->id_pelanggan) }}" class="btn btn-warning btn-sm">Edit</a>

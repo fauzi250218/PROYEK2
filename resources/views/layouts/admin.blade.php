@@ -131,7 +131,7 @@
                 </a>
             </div>
     
-            <a href="" class="menu-link">
+            <a href="{{ route('kas.index') }}" class="menu-link {{ request()->routeIs('kas.index') ? 'active' : '' }}" data-title="Kas Masuk & Keluar">
                 <i class="fas fa-exchange-alt me-2"></i>Kas Masuk dan Keluar
             </a>
     
@@ -140,7 +140,7 @@
             </a>
     
             <!-- Pindahin Laporan Kas Masuk dan Keluar di sini -->
-            <a href="" class="menu-link">
+            <a href="{{ route('kas.laporan.form') }}" class="menu-link {{ request()->routeIs('kas.laporan.form') ? 'active' : '' }}" data-title="Laporan Kas">
                 <i class="fas fa-file-alt me-2"></i>Laporan Kas Masuk dan Keluar
             </a>
         </div>

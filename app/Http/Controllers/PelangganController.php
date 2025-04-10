@@ -14,14 +14,14 @@ class PelangganController extends Controller
         $search = $request->input('search');
 
         $pelanggan = Users::where('level', 'pelanggan')
-        ->with(['pelanggan.paket']) 
+        ->with(['pelanggan.data_paket']) 
         ->when($search, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('username', 'like', "%{$search}%")
                     ->orWhereHas('pelanggan', function ($query) use ($search) {
                         $query->where('nama_pelanggan', 'like', "%{$search}%")
-                              ->orWhere('alamat', 'like', "%{$search}%")
-                              ->orWhere('no_telp', 'like', "%{$search}%");
+                            ->orWhere('alamat', 'like', "%{$search}%")
+                            ->orWhere('no_telp', 'like', "%{$search}%");
                     });
             });
         })

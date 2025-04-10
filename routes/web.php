@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\KasController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,3 +34,14 @@ Route::get('/pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('
 Route::put('/pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
 Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
 Route::get('/sinkron', [PelangganController::class, 'sinkronDataLama']);
+Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
+Route::get('/kas/create', [KasController::class, 'create'])->name('kas.create');
+Route::post('/kas', [KasController::class, 'store'])->name('kas.store');
+Route::get('/kas/{id}/edit', [KasController::class, 'edit'])->name('kas.edit');
+Route::put('/kas/{id}', [KasController::class, 'update'])->name('kas.update');
+Route::delete('/kas/{id}', [KasController::class, 'destroy'])->name('kas.destroy');
+// Route untuk laporan
+Route::get('/laporan/kas', [KasController::class, 'laporanForm'])->name('kas.laporan.form');
+Route::get('/laporan/kas/cetak', [KasController::class, 'laporanCetak'])->name('kas.laporan.cetak');
+
+

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\PaketController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,7 +28,7 @@ class Pelanggan extends Model
         return $this->hasOne(Users::class, 'id_pelanggan', 'id_pelanggan');
     }
 
-    public function paket()
+    public function data_paket()
     {
         return $this->belongsTo(Paket::class, 'paket', 'id'); 
     }
