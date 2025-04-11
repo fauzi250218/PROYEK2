@@ -16,7 +16,7 @@
     {{-- Tabel Data Kas --}}
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
-            <thead class="table-primary text-center">
+            <thead>
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>

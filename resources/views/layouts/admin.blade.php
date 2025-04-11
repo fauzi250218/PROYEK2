@@ -6,7 +6,9 @@
     <title>@yield('title', 'Admin Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     <style>
@@ -135,7 +137,7 @@
                 <i class="fas fa-exchange-alt me-2"></i>Kas Masuk dan Keluar
             </a>
     
-            <a href="" class="menu-link">
+            <a href="{{ route('tagihan.index') }}" class="menu-link {{ request()->routeIs('tagihan.index') ? 'active' : '' }}" data-title="Tagihan">
                 <i class="fas fa-money-bill-wave me-2"></i>Data Tagihan
             </a>
     

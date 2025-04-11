@@ -1,51 +1,67 @@
 @extends('layouts.admin')
-
-@section('title', 'Dashboard')
-@section('dashboard_active', 'active')
+@section('title', 'Beranda Admin')
 
 @section('content')
-<div class="container mt-4">
-    <div class="row mt-3">
-        <!-- Kartu Pemasukan -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 rounded-lg bg-success text-white">
-                <div class="card-body d-flex flex-column align-items-center">
-                    <i class="fas fa-wallet fa-2x mb-2"></i>
-                    <h6 class="fw-semibold">Total Pemasukan</h6>
-                    <h5 class="fw-bold">Rp 15,000,000</h5>
+<div class="container">
+    <h2 class="mb-4">Selamat Datang, {{ $user->nama_user }}</h2>
+
+    <div class="row">
+        {{-- Pemasukan --}}
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-success border-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Total Pemasukan</h6>
+                            <h4 class="text-success">Rp {{ number_format($totalMasuk, 0, ',', '.') }}</h4>
+                        </div>
+                        <i class="bi bi-cash-stack fs-2 text-success"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Kartu Pengeluaran -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 rounded-lg bg-danger text-white">
-                <div class="card-body d-flex flex-column align-items-center">
-                    <i class="fas fa-money-bill-wave fa-2x mb-2"></i>
-                    <h6 class="fw-semibold">Total Pengeluaran</h6>
-                    <h5 class="fw-bold">Rp 5,500,000</h5>
+        {{-- Pengeluaran --}}
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-danger border-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Total Pengeluaran</h6>
+                            <h4 class="text-danger">Rp {{ number_format($totalKeluar, 0, ',', '.') }}</h4>
+                        </div>
+                        <i class="bi bi-cash-coin fs-2 text-danger"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Kartu Saldo -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 rounded-lg bg-primary text-white">
-                <div class="card-body d-flex flex-column align-items-center">
-                    <i class="fas fa-piggy-bank fa-2x mb-2"></i>
-                    <h6 class="fw-semibold">Saldo Saat Ini</h6>
-                    <h5 class="fw-bold">Rp 9,500,000</h5>
+        {{-- Saldo --}}
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-primary border-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Saldo Saat Ini</h6>
+                            <h4 class="text-primary">Rp {{ number_format($saldo, 0, ',', '.') }}</h4>
+                        </div>
+                        <i class="bi bi-wallet2 fs-2 text-primary"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Kartu Jumlah Transaksi -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 rounded-lg bg-warning text-dark">
-                <div class="card-body d-flex flex-column align-items-center">
-                    <i class="fas fa-exchange-alt fa-2x mb-2"></i>
-                    <h6 class="fw-semibold">Jumlah Transaksi</h6>
-                    <h5 class="fw-bold">120</h5>
+        {{-- Jumlah Transaksi --}}
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-warning border-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Transaksi Lunas</h6>
+                            <h4 class="text-warning">{{ $jumlahTransaksi }}</h4>
+                        </div>
+                        <i class="bi bi-check-circle fs-2 text-warning"></i>
+                    </div>
                 </div>
             </div>
         </div>
