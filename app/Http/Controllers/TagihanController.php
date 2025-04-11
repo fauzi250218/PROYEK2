@@ -36,7 +36,7 @@ class TagihanController extends Controller
             })
             ->orderBy('tahun', 'desc')
             ->orderBy('bulan', 'desc')
-            ->paginate(10)
+            ->paginate(5)
             ->withQueryString();
     
         return view('tagihan.index', compact('tagihans', 'namaBulan'));
