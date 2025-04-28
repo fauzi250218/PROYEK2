@@ -41,7 +41,7 @@ class TagihanController extends Controller
     
         return view('tagihan.index', compact('tagihans', 'namaBulan'));
     }
-    
+
     public function create()
     {
         $pelanggans = Pelanggan::with('data_paket')->get();
@@ -83,7 +83,6 @@ class TagihanController extends Controller
         $tagihan->status = 'Lunas';
         $tagihan->save();
     
-        // Cegah data ganda di kas
         $sudahAda = Kas::where('keterangan', 'LIKE', '%Tagihan ID: ' . $tagihan->id . '%')->exists();
     
         if (!$sudahAda) {
@@ -96,7 +95,8 @@ class TagihanController extends Controller
         }
     
         return back()->with('success', 'Status tagihan diperbarui dan data kas berhasil dicatat.');
-    }    
+    }
+
     public function kirimwa($id)
     {
         $tagihan = Tagihan::with('pelanggan.user', 'pelanggan.data_paket')->findOrFail($id);
@@ -108,7 +108,6 @@ class TagihanController extends Controller
                 . "Bulan: {$tagihan->bulan} / {$tagihan->tahun}\n"
                 . "Status: {$tagihan->status}";
 
-        // Contoh menggunakan API dari pihak ketiga (ubah URL dan token sesuai API Anda)
         Http::get('https://api.whatsapp.example.com/send', [
             'phone' => $no,
             'text' => $message,
@@ -116,5 +115,12 @@ class TagihanController extends Controller
         ]);
 
         return back()->with('success', 'Tagihan berhasil dikirim via WhatsApp.');
+    }
+
+    public function cetak($id)
+    {
+        $tagihan = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])->findOrFail($id);
+
+        return view('tagihan.cetak', compact('tagihan'));
     }
 }
