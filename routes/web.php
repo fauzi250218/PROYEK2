@@ -49,3 +49,4 @@ Route::post('/tagihan', [TagihanController::class, 'store'])->name('tagihan.stor
 Route::patch('/tagihan/{id}/status', [TagihanController::class, 'updateStatus'])->name('tagihan.tandaiLunas');
 Route::get('tagihan/{id}/cetak', [TagihanController::class, 'cetak'])->name('tagihan.cetak');
 Route::get('/tagihan/{id}/kirimwa', [TagihanController::class, 'kirimwa'])->name('tagihan.kirimwa');
+
