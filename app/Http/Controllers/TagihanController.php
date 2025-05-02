@@ -195,42 +195,62 @@ class TagihanController extends Controller
     
         $snap_token = Snap::getSnapToken($transaction_data);
     
-        // Setelah transaksi berhasil, update status tagihan dan kirim WA
-        // Simulasi pembayaran berhasil
-        $tagihan->status = 'Lunas';
-        $tagihan->save();
-    
-        // Cegah data ganda di kas
-        $sudahAda = Kas::where('keterangan', 'LIKE', '%Tagihan ID: ' . $tagihan->id . '%')->exists();
-    
-        if (!$sudahAda) {
-            Kas::create([
-                'tanggal' => now()->toDateString(),
-                'keterangan' => 'Pembayaran tagihan oleh ' . optional(optional($tagihan->pelanggan)->user)->nama_user . ' (Tagihan ID: ' . $tagihan->id . ')',
-                'kas_masuk' => $tagihan->jumlah,
-                'kas_keluar' => 0,
-            ]);
-        }
-    
-        // Kirim WA konfirmasi pembayaran
-        if ($tagihan->pelanggan && $tagihan->pelanggan->no_telp) {
-            $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-            $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran tagihan Anda telah dikonfirmasi.\n"
-                . "Status: Lunas\n"
-                . "Terima kasih atas pembayarannya 🙏"
-                . "Salam hangat, Lilik.Net";
-    
-            Http::withHeaders([
-                'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
-            ])->asForm()->post('https://api.fonnte.com/send', [
-                'target' => $no,
-                'message' => $message,
-                'countryCode' => '62'
-            ]);
-        }
-    
         return view('tagihan.bayar', compact('snap_token', 'tagihan'));
+    }
+    
+    public function midtransNotification(Request $request)
+    {
+        $transaction = $request->all(); // Data yang diterima dari Midtrans
+    
+        $orderId = $transaction['order_id'];
+        $status = $transaction['transaction_status'];
+    
+        // Cari tagihan berdasarkan order_id
+        $tagihan = Tagihan::where('order_id', $orderId)->first();
+    
+        if (!$tagihan) {
+            return response()->json(['error' => 'Tagihan tidak ditemukan.'], 404);
+        }
+    
+        if ($status === 'settlement') {
+            // Pembayaran berhasil, tandai lunas
+            $tagihan->status = 'Lunas';
+            $tagihan->save();
+    
+            // Cegah data ganda di kas
+            $sudahAda = Kas::where('keterangan', 'LIKE', '%Tagihan ID: ' . $tagihan->id . '%')->exists();
+    
+            if (!$sudahAda) {
+                Kas::create([
+                    'tanggal' => now()->toDateString(),
+                    'keterangan' => 'Pembayaran tagihan oleh ' . optional($tagihan->pelanggan->user)->nama_user . ' (Tagihan ID: ' . $tagihan->id . ')',
+                    'kas_masuk' => $tagihan->jumlah,
+                    'kas_keluar' => 0,
+                ]);
+            }
+    
+            // Kirim WA konfirmasi pembayaran
+            if ($tagihan->pelanggan && $tagihan->pelanggan->no_telp) {
+                $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
+                $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran tagihan Anda telah dikonfirmasi.\n"
+                    . "Status: Lunas\n"
+                    . "Terima kasih atas pembayarannya 🙏";
+    
+                Http::withHeaders([
+                    'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
+                ])->asForm()->post('https://api.fonnte.com/send', [
+                    'target' => $no,
+                    'message' => $message,
+                    'countryCode' => '62'
+                ]);
+            }
+    
+            return redirect()->route('tagihan.index')->with('success', 'Pembayaran berhasil dan tagihan telah dilunasi!');
+        }
+    
+        return redirect()->route('tagihan.index')->with('error', 'Pembayaran gagal, silakan coba lagi.');
     }    
+    
     public function cetak($id)
     {
         $tagihan = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])->findOrFail($id);

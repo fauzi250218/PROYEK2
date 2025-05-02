@@ -51,3 +51,4 @@ Route::get('tagihan/{id}/cetak', [TagihanController::class, 'cetak'])->name('tag
 Route::get('/tagihan/{id}/kirimwa', [TagihanController::class, 'kirimwa'])->name('tagihan.kirimwa');
 Route::get('/tagihan/{id}/midtrans', [TagihanController::class, 'payWithMidtrans'])->name('tagihan.midtrans');
 Route::get('/tagihan/{id}/bayar/sukses', [TagihanController::class, 'updateStatus'])->name('tagihan.bayar.sukses');
+Route::post('/midtrans-notification', [TagihanController::class, 'midtransNotification']);

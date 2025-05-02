@@ -9,8 +9,21 @@
     <script>
         Swal.fire({
             icon: 'success',
-            title: 'Berhasil',
+            title: 'Pembayaran Berhasil',
             text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Pembayaran Gagal',
+            text: @json(session('error')),
             timer: 2000,
             showConfirmButton: false
         });
@@ -22,9 +35,7 @@
         <select name="bulan" class="form-select">
             <option value="">-- Pilih Bulan --</option>
             @foreach($namaBulan as $bln => $nama)
-                <option value="{{ $bln }}" {{ request('bulan') == $bln ? 'selected' : '' }}>
-                    {{ $nama }}
-                </option>
+                <option value="{{ $bln }}" {{ request('bulan') == $bln ? 'selected' : '' }}>{{ $nama }}</option>
             @endforeach
         </select>
     </div>

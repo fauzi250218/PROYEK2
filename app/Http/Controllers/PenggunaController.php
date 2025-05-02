@@ -20,7 +20,7 @@ class PenggunaController extends Controller
                       ->orWhere('email', 'like', "%{$search}%")
                       ->orWhere('level', 'like', "%{$search}%");
             })
-            ->paginate(5)
+            ->paginate(3)
             ->withQueryString(); // agar search tetap saat pindah halaman
     
         return view('pengguna.index', compact('users', 'user'));
