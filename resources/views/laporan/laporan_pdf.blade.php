@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Laporan Kas Masuk dan Keluar</h2>
+    <h2 style="text-align:center;">Laporan Kas Masuk dan Keluar Lilik.Net</h2>
     <p>Periode: {{ $tanggalAwal }} s.d. {{ $tanggalAkhir }}</p>
 
     <table>

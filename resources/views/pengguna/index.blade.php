@@ -33,6 +33,7 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th>Foto</th>
                 <th>Nama User</th>
                 <th>Username</th>
                 <th>Level</th>
@@ -43,6 +44,9 @@
             @forelse ($users as $index => $u)
             <tr>
                 <td>{{ $users->firstItem() + $index }}</td>
+                <td>
+                    <img src="{{ asset('storage/' . $u->foto) }}" alt="Foto" width="50" height="50" style="object-fit: cover; border-radius: 50%;">
+                </td>                              
                 <td>{{ $u->nama_user }}</td>
                 <td>{{ $u->username }}</td>
                 <td>{{ $u->level }}</td>

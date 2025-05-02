@@ -10,14 +10,20 @@ class KasController extends Controller
 {
     public function index()
     {
-        $kas = Kas::all();
-        $totalMasuk = $kas->sum('kas_masuk');
-        $totalKeluar = $kas->sum('kas_keluar');
+        $kas = Kas::orderByRaw("
+                    (kas_masuk > 0 AND kas_keluar > 0) DESC,
+                    (kas_masuk > 0 OR kas_keluar > 0) DESC,
+                    tanggal DESC
+                ")
+                ->paginate(4);
+    
+        $totalMasuk = Kas::sum('kas_masuk');
+        $totalKeluar = Kas::sum('kas_keluar');
         $saldo = $totalMasuk - $totalKeluar;
-
+    
         return view('kas.index', compact('kas', 'totalMasuk', 'totalKeluar', 'saldo'));
     }
-
+    
     public function create()
     {
         return view('kas.create');

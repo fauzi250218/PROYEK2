@@ -35,7 +35,7 @@
         
         <div class="mb-3">
             <label>No. Telepon</label>
-            <input type="text" name="no_telp" class="form-control" value="{{ old('no_telp') }}" required>
+            <input type="text" name="no_telp" class="form-control" value="{{ old('no_telp') }}" placeholder="ganti 0 menjadi 62" required>
         </div>
 
         <div class="mb-3">

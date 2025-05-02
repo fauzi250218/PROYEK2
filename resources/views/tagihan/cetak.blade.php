@@ -9,7 +9,7 @@
     </style>
 </head>
 <body>
-    <h2>Tagihan Pelanggan</h2>
+    <h2>Tagihan Pelanggan Lilik.Net</h2>
     <table>
         <tr>
             <th>Nama</th>
