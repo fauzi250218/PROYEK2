@@ -85,8 +85,14 @@
                     </form>
                 @endif
                 <a href="{{ route('tagihan.cetak', $t->id) }}" class="btn btn-secondary btn-sm" target="_blank">Cetak</a>
-                <a href="{{ route('tagihan.kirimwa', $t->id) }}" class="btn btn-info btn-sm" target="_blank">Kirim WA</a>
-            </td>
+                
+                <!-- Hanya tampilkan tombol Bayar jika status tagihan 'Belum Lunas' -->
+                @if($t->status == 'Belum Lunas')
+                    <a href="{{ route('tagihan.midtrans', $t->id) }}" class="btn btn-warning btn-sm">Bayar</a>
+                @endif
+            
+                <a href="{{ route('tagihan.kirimwa', $t->id) }}" class="btn btn-info btn-sm">Kirim WA</a>
+            </td>            
         </tr>
         @empty
         <tr>

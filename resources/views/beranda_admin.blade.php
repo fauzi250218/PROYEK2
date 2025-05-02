@@ -18,6 +18,11 @@
                             </div>
                             <i class="bi bi-cash-stack fs-2 text-success"></i>
                         </div>
+                        {{-- Progress Bar --}}
+                        <div class="progress mt-3">
+                            <div class="progress-bar" role="progressbar" style="width: {{ ($totalMasuk / $totalTargetKas) * 100 }}%" aria-valuenow="{{ ($totalMasuk / $totalTargetKas) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="d-block text-muted mt-2">Progres Pemasukan Bulan Ini</small>
                     </div>
                 </div>
             </a>
@@ -35,6 +40,11 @@
                             </div>
                             <i class="bi bi-cash-coin fs-2 text-danger"></i>
                         </div>
+                        {{-- Progress Bar --}}
+                        <div class="progress mt-3">
+                            <div class="progress-bar" role="progressbar" style="width: {{ ($totalKeluar / $totalTargetKas) * 100 }}%" aria-valuenow="{{ ($totalKeluar / $totalTargetKas) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="d-block text-muted mt-2">Progres Pengeluaran Bulan Ini</small>
                     </div>
                 </div>
             </a>
@@ -65,14 +75,98 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-muted">Transaksi Lunas</h6>
-                                <h4 class="text-warning">{{ $jumlahTransaksi }}</h4>
+                                <h4 class="text-warning">{{ $jumlahTransaksiLunas }}</h4>
                             </div>
                             <i class="bi bi-check-circle fs-2 text-warning"></i>
                         </div>
+                        <small class="d-block text-muted mt-2">Dari total transaksi: {{ number_format(($jumlahTransaksiLunas / ($jumlahTransaksiLunas + $jumlahTransaksiBelumLunas)) * 100, 2) }}%</small>
                     </div>
                 </div>
             </a>
         </div>
     </div>
+
+    {{-- Grafik Pemasukan dan Pengeluaran --}}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Grafik Pemasukan dan Pengeluaran</h5>
+            <div style="height: 100px;">
+                <canvas id="kasChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const labels = @json($labels);
+        const kasMasuk = @json($totalMasukPerBulan);
+        const kasKeluar = @json($totalKeluarPerBulan);
+
+        // Grafik Pemasukan dan Pengeluaran
+        const ctx = document.getElementById('kasChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Pemasukan',
+                        data: kasMasuk,
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 128, 0, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Pengeluaran',
+                        data: kasKeluar,
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Grafik Transaksi Lunas vs Belum Lunas
+        const transaksiPieChart = document.getElementById('transaksiPieChart').getContext('2d');
+        new Chart(transaksiPieChart, {
+            type: 'pie',
+            data: {
+                labels: ['Lunas', 'Belum Lunas'],
+                datasets: [{
+                    data: [{{ $jumlahTransaksiLunas }}, {{ $jumlahTransaksiBelumLunas }}],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.raw + ' transaksi';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 @endsection
