@@ -13,18 +13,21 @@ class PaketApiController extends Controller
      */
     public function index()
     {
+        // Ambil semua data paket
         $paket = Paket::all();
 
+        // Format data agar hanya mengirimkan data yang diperlukan
         $paket = $paket->map(function ($item) {
             return [
                 'id' => $item->id,
                 'nama' => $item->nama_paket,
                 'kategori' => $item->kategori,
                 'kecepatan' => $item->kecepatan,
-                'harga' => $item->harga,
+                'harga' => (string) $item->harga,  // Pastikan harga dikirim sebagai string
             ];
         });
 
+        // Kirimkan data sebagai respons JSON
         return response()->json([
             'success' => true,
             'paket' => $paket,
@@ -36,15 +39,18 @@ class PaketApiController extends Controller
      */
     public function show($id)
     {
+        // Mencari paket berdasarkan ID
         $item = Paket::find($id);
 
         if (!$item) {
+            // Jika paket tidak ditemukan, kirimkan pesan error
             return response()->json([
                 'success' => false,
                 'message' => 'Paket tidak ditemukan'
             ], 404);
         }
 
+        // Kirimkan data paket dengan detail
         return response()->json([
             'success' => true,
             'paket' => [
@@ -52,7 +58,7 @@ class PaketApiController extends Controller
                 'nama' => $item->nama_paket,
                 'kategori' => $item->kategori,
                 'kecepatan' => $item->kecepatan,
-                'harga' => $item->harga,
+                'harga' => (string) $item->harga,  // Pastikan harga dikirim sebagai string
             ],
         ]);
     }

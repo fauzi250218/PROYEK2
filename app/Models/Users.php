@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;  // Menambahkan HasApiTokens untuk Sanctum
 
 class Users extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;  // Menambahkan HasApiTokens
 
     protected $table = 'tb_user';
     protected $primaryKey = 'id';
@@ -16,21 +17,24 @@ class Users extends Authenticatable
     protected $keyType = 'int';
     public $timestamps = true;
 
+    // Menghapus id_pelanggan jika tidak diperlukan
     protected $fillable = [
         'username',
         'nama_user',
+        'email',       // Pastikan email juga disertakan
         'password',
         'level',
         'foto',
-        'id_pelanggan',
     ];
 
+    // Menyembunyikan password untuk keamanan
     protected $hidden = [
         'password',
     ];
 
+    // Relasi untuk pelanggan
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
-    }    
+    }
 }
