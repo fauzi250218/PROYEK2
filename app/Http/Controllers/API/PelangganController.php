@@ -1,45 +1,50 @@
 <?php
 
-// app/Http/Controllers/Api/PelangganController.php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pelanggan;
-use App\Models\Users;
+use App\Models\Paket;
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
 {
+    // Fungsi untuk menambah data pelanggan (bukan bagian dari registrasi pengguna)
     public function store(Request $request)
-{
-    // Cek apakah request data valid
-    dd($request->all()); // Ini akan menampilkan semua data yang dikirimkan
+    {
+        // Validasi data pelanggan
+        $request->validate([
+            'nama_pelanggan' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'no_telp' => 'required|string|max:15',
+            'paket' => 'required|exists:paket,id',  // Memastikan paket ada di tabel paket
+            'username' => 'required|exists:tb_user,username',  // Memastikan username ada di tb_user
+        ]);
 
-    $request->validate([
-        'nama_pelanggan' => 'required|string|max:255',
-        'alamat' => 'required|string',
-        'no_telp' => 'required|string|max:15',
-        'paket' => 'required|exists:data_paket,id', // foreign key ke tabel paket
-        'username' => 'required|string|unique:tb_user,username',
-    ]);
+        // Ambil ID pengguna berdasarkan username yang terdaftar di tb_user
+        $user = \App\Models\Users::where('username', $request->username)->first();
 
-    // Simpan data pelanggan terlebih dahulu
-    $pelanggan = Pelanggan::create([
-        'nama_pelanggan' => $request->nama_pelanggan,
-        'alamat' => $request->alamat,
-        'no_telp' => $request->no_telp,
-        'paket' => $request->paket,
-    ]);
+        // Jika pengguna ditemukan, simpan data pelanggan
+        if ($user) {
+            $pelanggan = Pelanggan::create([
+                'nama_pelanggan' => $request->nama_pelanggan,
+                'alamat' => $request->alamat,
+                'no_telp' => $request->no_telp,
+                'paket' => $request->paket,  // Simpan paket sesuai ID
+            ]);
 
-    // Simpan data user yang terhubung ke pelanggan
-    Users::create([
-        'username' => $request->username,
-        'nama_user' => $request->nama_pelanggan,
-        'password' => bcrypt('password123'), // default password
-        'level' => 'pelanggan',
-    ]);
+            // Update hubungan antara pengguna dengan pelanggan
+            $user->id_pelanggan = $pelanggan->id_pelanggan;  // Menyimpan id pelanggan di tabel tb_user
+            $user->save();
 
-    return redirect()->route('pelanggan.index')->with('success', 'Pelanggan berhasil ditambahkan!');
-}
+            return response()->json([
+                'message' => 'Pelanggan berhasil ditambahkan!',
+                'pelanggan' => $pelanggan,
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Username tidak ditemukan!',
+            ], 404);
+        }
+    }
 }

@@ -3,26 +3,28 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Users;  // Model untuk tb_user
+use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;  // Untuk menyimpan file
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;  // Pastikan Auth sudah diimport
+use Illuminate\Support\Facades\Log;  // Untuk logging
+use Illuminate\Support\Facades\Storage;
 
 class PenggunaController extends Controller
 {
     // Registrasi Pengguna
     public function register(Request $request)
     {
-        // Validasi input
+        // Log data request untuk debugging
+        Log::info('Data yang diterima untuk registrasi: ', $request->all());
+
+        // Validasi input tanpa email
         $validator = Validator::make($request->all(), [
             'username' => 'required|unique:tb_user,username',
             'nama_user' => 'required',
             'password' => 'required|min:6',
-            'email' => 'required|email|unique:tb_user,email',  // Pastikan email unik
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Foto opsional, hanya validasi jika ada
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Foto opsional
         ]);
 
         if ($validator->fails()) {
@@ -32,27 +34,38 @@ class PenggunaController extends Controller
         // Proses upload foto jika ada
         $fotoPath = null;
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('profiles', 'public'); // Simpan foto ke storage
+            try {
+                $fotoPath = $request->file('foto')->store('profiles', 'public'); // Simpan foto ke storage
+                Log::info('Foto berhasil di-upload ke: ', ['fotoPath' => $fotoPath]);
+            } catch (\Exception $e) {
+                // Log error saat meng-upload foto
+                Log::error('Error saat meng-upload foto: ', ['error' => $e->getMessage()]);
+                return response()->json(['message' => 'Terjadi kesalahan saat meng-upload foto.'], 500);
+            }
         }
 
-        // Membuat pengguna baru di tabel tb_user
-        $user = Users::create([
-            'username' => $request->username,
-            'nama_user' => $request->nama_user,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'level' => 'pelanggan',  // Default level pelanggan
-            'foto' => $fotoPath, // Menyimpan path foto di database
-        ]);
+        // Membuat pengguna baru di tabel tb_user tanpa email
+        try {
+            $user = Users::create([
+                'username' => $request->username,
+                'nama_user' => $request->nama_user,
+                'password' => Hash::make($request->password),
+                'level' => 'pelanggan',  // Default level pelanggan
+                'foto' => $fotoPath,  // Menyimpan path foto di database
+            ]);
 
-        // Generate token untuk pengguna yang baru terdaftar
-        $token = $user->createToken('API Token')->plainTextToken;
+            // Generate token untuk pengguna yang baru terdaftar
+            $token = $user->createToken('API Token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Pendaftaran berhasil!',
-            'user' => $user,
-            'token' => $token,
-        ], 201);
+            return response()->json([
+                'message' => 'Pendaftaran berhasil!',
+                'user' => $user,
+                'token' => $token,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan saat registrasi pengguna.'], 500);
+        }
     }
 
     // Login Pengguna
@@ -88,6 +101,11 @@ class PenggunaController extends Controller
     // Menampilkan data pengguna yang sedang login
     public function userProfile()
     {
-        return response()->json(Auth::user(), 200);
+        // Cek jika pengguna telah terautentikasi
+        if (Auth::check()) {
+            return response()->json(Auth::user(), 200);  // Mengembalikan data pengguna yang terautentikasi
+        } else {
+            return response()->json(['message' => 'User not authenticated'], 401);  // Jika tidak terautentikasi
+        }
     }
 }
