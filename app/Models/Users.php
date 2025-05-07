@@ -1,5 +1,7 @@
 <?php
 
+// File: app/Models/Users.php
+
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,7 +19,6 @@ class Users extends Authenticatable
     protected $keyType = 'int';
     public $timestamps = true;
 
-    // Menghapus id_pelanggan jika tidak diperlukan
     protected $fillable = [
         'username',
         'nama_user',
@@ -32,9 +33,11 @@ class Users extends Authenticatable
         'password',
     ];
 
-    // Relasi untuk pelanggan
+    /**
+     * Mendefinisikan relasi 'pelanggan' (satu pengguna memiliki satu pelanggan).
+     */
     public function pelanggan()
     {
-        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan'); // 'id_pelanggan' adalah foreign key di tabel 'tb_user'
     }
 }

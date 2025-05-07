@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\PenggunaController;  // Menggunakan PenggunaController
 use App\Http\Controllers\API\PaketApiController;  // Menambahkan PaketApiController
 use App\Http\Controllers\API\PelangganController;  // Menambahkan PelangganController
+use App\Http\Controllers\API\TagihanApiController;
 use Illuminate\Support\Facades\Route;
 
 // API Paket
@@ -18,3 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', [PenggunaController::class, 'use
 
 // API Pendaftaran Paket Pelanggan
 Route::post('/daftar-paket', [PelangganController::class, 'store']);  // Menangani pendaftaran paket pelanggan
+
+Route::get('/tagihan', [TagihanApiController::class, 'index']); // Menampilkan semua tagihan
+Route::get('/tagihan/{id}', [TagihanApiController::class, 'show']); // Menampilkan tagihan berdasarkan ID pelanggan
