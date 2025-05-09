@@ -8,7 +8,7 @@ class Tagihan extends Model
     
     protected $table = 'tb_tagihan';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_pelanggan', 'bulan', 'tahun', 'jumlah', 'status'];
+    protected $fillable = ['id_pelanggan', 'bulan', 'tahun', 'jumlah', 'status', 'metode_pembayaran', 'order_id'];
 
     public function pelanggan()
     {

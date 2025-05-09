@@ -219,5 +219,6 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+    @yield('scripts')
 </body>
 </html>
