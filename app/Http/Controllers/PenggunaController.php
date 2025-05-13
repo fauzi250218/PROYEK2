@@ -17,7 +17,6 @@ class PenggunaController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('nama_user', 'like', "%{$search}%")
                       ->orWhere('username', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
                       ->orWhere('level', 'like', "%{$search}%");
             })
             ->paginate(3)

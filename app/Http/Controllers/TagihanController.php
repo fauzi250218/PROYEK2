@@ -26,19 +26,16 @@ class TagihanController extends Controller
         ];
 
         $tagihans = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])
-            ->when($search, function ($query, $search) {
-                $query->whereHas('pelanggan', function ($q) use ($search) {
-                    $q->where('nama_pelanggan', 'like', '%' . $search . '%');
-                });
-            })
-            ->when($bulan, function ($query, $bulan) {
-                $query->where('bulan', $bulan);
-            })
-            ->when($tahun, function ($query, $tahun) {
-                $query->where('tahun', $tahun);
-            })
-            ->orderBy('tahun', 'desc')
-            ->orderBy('bulan', 'desc')
+            ->when($search, fn($query) => 
+                $query->whereHas('pelanggan', fn($q) => 
+                    $q->where('nama_pelanggan', 'like', '%' . $search . '%')
+                )
+            )
+            ->when($bulan, fn($query) => $query->where('bulan', $bulan))
+            ->when($tahun, fn($query) => $query->where('tahun', $tahun))
+            ->orderByRaw("FIELD(status, 'Belum Lunas', 'Lunas')")
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
             ->paginate(5)
             ->withQueryString();
 
@@ -75,17 +72,17 @@ class TagihanController extends Controller
                     'status' => 'Belum Lunas'
                 ]);
 
-                // Kirim WA otomatis saat buat tagihan
-                if ($pelanggan->no_telp) {
+                // Kirim WhatsApp
+                if ($pelanggan->no_telp && $pelanggan->user) {
                     $no = preg_replace('/^0/', '62', $pelanggan->no_telp);
-                    $message = "Halo {$pelanggan->user->nama_user}, berikut adalah tagihan Anda:\n"
+                    $message = "Halo {$pelanggan->user->nama_user}, berikut tagihan Anda:\n"
                         . "Paket: {$pelanggan->data_paket->nama_paket}\n"
                         . "Jumlah: Rp" . number_format($pelanggan->data_paket->harga, 0, ',', '.') . "\n"
                         . "Bulan: {$request->bulan} / {$request->tahun}\n"
                         . "Status: Belum Lunas";
 
                     Http::withHeaders([
-                        'Authorization' => '1HcFqZEKiuCvJiK6oAuw' // Ganti dengan token kamu
+                        'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
                     ])->asForm()->post('https://api.fonnte.com/send', [
                         'target' => $no,
                         'message' => $message,
@@ -100,11 +97,10 @@ class TagihanController extends Controller
 
     public function updateStatus($id)
     {
-        $tagihan = Tagihan::with(['pelanggan.user'])->findOrFail($id);
+        $tagihan = Tagihan::with('pelanggan.user')->findOrFail($id);
         $tagihan->status = 'Lunas';
         $tagihan->save();
 
-        // Cegah data ganda di kas
         $sudahAda = Kas::where('keterangan', 'LIKE', '%Tagihan ID: ' . $tagihan->id . '%')->exists();
 
         if (!$sudahAda) {
@@ -116,12 +112,10 @@ class TagihanController extends Controller
             ]);
         }
 
-        // Kirim WA konfirmasi pembayaran
         if ($tagihan->pelanggan && $tagihan->pelanggan->no_telp) {
             $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-            $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran tagihan Anda telah dikonfirmasi.\n"
-                . "Status: Lunas\n"
-                . "Terima kasih atas pembayarannya 🙏";
+            $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran Anda telah dikonfirmasi.\n"
+                . "Status: Lunas\nTerima kasih 🙏";
 
             Http::withHeaders([
                 'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
@@ -132,129 +126,160 @@ class TagihanController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Status tagihan diperbarui, data kas dicatat, dan notifikasi WhatsApp dikirim.');
+        return back()->with('success', 'Status tagihan diperbarui dan notifikasi dikirim.');
     }
+
     public function kirimwa($id)
     {
         $tagihan = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])->findOrFail($id);
-    
+
         if (!$tagihan->pelanggan || !$tagihan->pelanggan->no_telp) {
             return back()->with('error', 'Nomor telepon pelanggan tidak tersedia.');
         }
-    
+
         $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-        $message = "Halo {$tagihan->pelanggan->user->nama_user}, berikut adalah tagihan Anda:\n"
+        $message = "Halo {$tagihan->pelanggan->user->nama_user}, berikut tagihan Anda:\n"
             . "Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"
             . "Jumlah: Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "\n"
             . "Bulan: {$tagihan->bulan} / {$tagihan->tahun}\n"
             . "Status: {$tagihan->status}";
-    
+
         Http::withHeaders([
-            'Authorization' => '1HcFqZEKiuCvJiK6oAuw' // Ganti dengan token API Fonnte milikmu
+            'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
         ])->asForm()->post('https://api.fonnte.com/send', [
             'target' => $no,
             'message' => $message,
             'countryCode' => '62'
         ]);
-    
+
         return back()->with('success', 'Pesan WhatsApp berhasil dikirim.');
     }
-    
+
     public function payWithMidtrans($id)
     {
-        $tagihan = Tagihan::findOrFail($id);
-    
-        // Mengambil konfigurasi dari file config/midtrans.php
+        $tagihan = Tagihan::with('pelanggan.user')->findOrFail($id);
+
         Config::$serverKey = config('midtrans.server_key');
         Config::$clientKey = config('midtrans.client_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = true;
         Config::$is3ds = true;
-    
-        // Membuat detail transaksi
-        $orderId = 'TAGIHAN-' . $tagihan->id . '-' . time(); // order_id harus unik setiap kali
-    
+
+        $orderId = 'TAGIHAN-' . $tagihan->id . '-' . time();
+
         $transaction_details = [
             'order_id'     => $orderId,
             'gross_amount' => $tagihan->jumlah,
         ];
-    
+
         $customer_details = [
-            'first_name'    => optional($tagihan->pelanggan->user)->nama_user,
-            'email'         => optional($tagihan->pelanggan->user)->email,
-            'phone'         => $tagihan->pelanggan->no_telp,
+            'first_name' => optional($tagihan->pelanggan->user)->nama_user,
+            'email'      => optional($tagihan->pelanggan->user)->email,
+            'phone'      => $tagihan->pelanggan->no_telp,
         ];
-    
-        $payment_type = 'credit_card';
-    
-        $transaction_data = [
+
+        $snap_token = Snap::getSnapToken([
             'transaction_details' => $transaction_details,
             'customer_details'    => $customer_details,
-            'payment_type'        => $payment_type,
-        ];
-    
-        $snap_token = Snap::getSnapToken($transaction_data);
-    
+        ]);
+
+        // Simpan order_id ke tagihan
+        $tagihan->order_id = $orderId;
+        $tagihan->save();
+
         return view('tagihan.bayar', compact('snap_token', 'tagihan'));
     }
-    
+
+    public function bayarManual($id)
+    {
+        $tagihan = Tagihan::with('pelanggan.user')->findOrFail($id);
+
+        if (!$tagihan->pelanggan || !$tagihan->pelanggan->no_telp) {
+            return back()->with('error', 'Nomor telepon pelanggan tidak tersedia.');
+        }
+
+        $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
+        $message = "Halo {$tagihan->pelanggan->user->nama_user}, berikut detail tagihan Anda:\n"
+            . "Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"  
+            . "💳 Jumlah: Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "\n"
+            . "📅 Periode: {$tagihan->bulan} / {$tagihan->tahun}\n\n"
+            . "Silakan transfer ke:\n🏦 BCA 123456789 a.n. Admin Lilik.net\n\n"
+            . "Setelah transfer, kirim bukti pembayaran ke admin. Terima kasih 🙏";
+
+        $response = Http::withHeaders([
+            'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
+        ])->asForm()->post('https://api.fonnte.com/send', [
+            'target' => $no,
+            'message' => $message,
+            'countryCode' => '62'
+        ]);
+
+        return $response->successful()
+            ? back()->with('success', 'Instruksi pembayaran berhasil dikirim via WhatsApp.')
+            : back()->with('error', 'Gagal mengirim pesan WhatsApp.');
+    }
+
     public function midtransNotification(Request $request)
     {
-        $transaction = $request->all(); // Data yang diterima dari Midtrans
+        $transaction = $request->all();
     
-        $orderId = $transaction['order_id'];
-        $status = $transaction['transaction_status'];
+        $orderId = $transaction['order_id'] ?? null;
+        $status = $transaction['transaction_status'] ?? null;
+        $paymentType = $transaction['payment_type'] ?? null;
     
-        // Cari tagihan berdasarkan order_id
+        if (!$orderId) {
+            return response()->json(['error' => 'Order ID tidak ditemukan'], 400);
+        }
+    
         $tagihan = Tagihan::where('order_id', $orderId)->first();
     
         if (!$tagihan) {
-            return response()->json(['error' => 'Tagihan tidak ditemukan.'], 404);
+            return response()->json(['error' => 'Tagihan tidak ditemukan'], 404);
         }
     
-        if ($status === 'settlement') {
-            // Pembayaran berhasil, tandai lunas
+        // Update status pembayaran
+        if ($status == 'settlement' || $status == 'capture') {
             $tagihan->status = 'Lunas';
+            $tagihan->metode_pembayaran = $paymentType; // Simpan metode pembayaran
             $tagihan->save();
-    
-            // Cegah data ganda di kas
-            $sudahAda = Kas::where('keterangan', 'LIKE', '%Tagihan ID: ' . $tagihan->id . '%')->exists();
-    
-            if (!$sudahAda) {
-                Kas::create([
-                    'tanggal' => now()->toDateString(),
-                    'keterangan' => 'Pembayaran tagihan oleh ' . optional($tagihan->pelanggan->user)->nama_user . ' (Tagihan ID: ' . $tagihan->id . ')',
-                    'kas_masuk' => $tagihan->jumlah,
-                    'kas_keluar' => 0,
-                ]);
-            }
-    
-            // Kirim WA konfirmasi pembayaran
-            if ($tagihan->pelanggan && $tagihan->pelanggan->no_telp) {
-                $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-                $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran tagihan Anda telah dikonfirmasi.\n"
-                    . "Status: Lunas\n"
-                    . "Terima kasih atas pembayarannya 🙏";
-    
-                Http::withHeaders([
-                    'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
-                ])->asForm()->post('https://api.fonnte.com/send', [
-                    'target' => $no,
-                    'message' => $message,
-                    'countryCode' => '62'
-                ]);
-            }
-    
-            return redirect()->route('tagihan.index')->with('success', 'Pembayaran berhasil dan tagihan telah dilunasi!');
+            
+            // Catat di kas
+            Kas::updateOrCreate(
+                ['keterangan' => 'Pembayaran tagihan oleh ' . optional(optional($tagihan->pelanggan)->user)->nama_user . ' (Tagihan ID: ' . $tagihan->id . ')'],
+                ['tanggal' => now()->toDateString(), 'kas_masuk' => $tagihan->jumlah, 'kas_keluar' => 0]
+            );
         }
     
-        return redirect()->route('tagihan.index')->with('error', 'Pembayaran gagal, silakan coba lagi.');
+        return response()->json(['success' => true]);
     }    
-    
-    public function cetak($id)
+
+    public function handleCallback(Request $request)
     {
-        $tagihan = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])->findOrFail($id);
-        $pdf = PDF::loadView('tagihan.cetak', compact('tagihan'));
-        return $pdf->stream('tagihan_' . $tagihan->id . '.pdf');
+        $notif = new \Midtrans\Notification();
+    
+        $status = $notif->transaction_status;
+        $type = $notif->payment_type;
+        $fraud = $notif->fraud_status;
+        $order_id = $notif->order_id;
+    
+        $tagihan = Tagihan::where('order_id', $order_id)->first();
+    
+        if ($status == 'capture') {
+            if ($type == 'credit_card') {
+                $tagihan->status = $fraud === 'challenge' ? 'Belum Lunas' : 'Lunas';
+            }
+        } elseif ($status == 'settlement') {
+            $tagihan->status = 'Lunas';
+        } elseif (in_array($status, ['pending', 'deny', 'expire', 'cancel'])) {
+            $tagihan->status = 'Belum Lunas';
+        }
+    
+        // Simpan metode pembayaran
+        $tagihan->metode_pembayaran = $type;
+    
+        $tagihan->save();
+    
+        return response()->json(['message' => 'Callback handled'], 200);
     }
+    
 }

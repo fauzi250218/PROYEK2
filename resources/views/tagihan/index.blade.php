@@ -65,9 +65,9 @@
             <th>Nama</th>
             <th>Paket</th>
             <th>Harga</th>
-            <th>Bulan</th>
-            <th>Tahun</th>
+            <th>Periode</th>
             <th>Status</th>
+            <th>Metode</th>
             <th>Aksi</th>
         </tr>
     </thead>
@@ -78,8 +78,7 @@
             <td>{{ optional(optional($t->pelanggan)->user)->nama_user ?? '-' }}</td>
             <td>{{ optional(optional($t->pelanggan)->data_paket)->nama_paket ?? '-' }}</td>
             <td>Rp{{ number_format($t->jumlah, 0, ',', '.') }}</td>
-            <td>{{ $namaBulan[$t->bulan] ?? $t->bulan }}</td>
-            <td>{{ $t->tahun }}</td>
+            <td>{{ ($namaBulan[$t->bulan] ?? $t->bulan) . ' ' . $t->tahun }}</td>
             <td>
                 @if($t->status == 'Lunas')
                     <span class="badge bg-success">Lunas</span>
@@ -87,6 +86,7 @@
                     <span class="badge bg-warning text-dark">Belum Lunas</span>
                 @endif
             </td>
+            <td>{{ $t->metode_pembayaran ?? '-' }}</td>
             <td>
                 @if($t->status == 'Belum Lunas')
                     <form action="{{ route('tagihan.tandaiLunas', $t->id) }}" method="POST" class="d-inline form-tandai-lunas">
@@ -99,7 +99,19 @@
                 
                 <!-- Hanya tampilkan tombol Bayar jika status tagihan 'Belum Lunas' -->
                 @if($t->status == 'Belum Lunas')
-                    <a href="{{ route('tagihan.midtrans', $t->id) }}" class="btn btn-warning btn-sm">Bayar</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bayar
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('tagihan.manual', $t->id) }}">Bayar Manual (WA)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('tagihan.midtrans', $t->id) }}">Bayar Otomatis</a>
+                        </li>
+                    </ul>
+                </div>                
                 @endif
             
                 <a href="{{ route('tagihan.kirimwa', $t->id) }}" class="btn btn-info btn-sm">Kirim WA</a>

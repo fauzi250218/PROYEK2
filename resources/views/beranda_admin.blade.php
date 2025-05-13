@@ -18,9 +18,11 @@
                             </div>
                             <i class="bi bi-cash-stack fs-2 text-success"></i>
                         </div>
-                        {{-- Progress Bar --}}
                         <div class="progress mt-3">
-                            <div class="progress-bar" role="progressbar" style="width: {{ ($totalMasuk / $totalTargetKas) * 100 }}%" aria-valuenow="{{ ($totalMasuk / $totalTargetKas) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            @php
+                                $progressMasuk = $totalTargetKas > 0 ? ($totalMasuk / $totalTargetKas) * 100 : 0;
+                            @endphp
+                            <div class="progress-bar" role="progressbar" style="width: {{ $progressMasuk }}%" aria-valuenow="{{ $progressMasuk }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <small class="d-block text-muted mt-2">Progres Pemasukan Bulan Ini</small>
                     </div>
@@ -40,9 +42,11 @@
                             </div>
                             <i class="bi bi-cash-coin fs-2 text-danger"></i>
                         </div>
-                        {{-- Progress Bar --}}
                         <div class="progress mt-3">
-                            <div class="progress-bar" role="progressbar" style="width: {{ ($totalKeluar / $totalTargetKas) * 100 }}%" aria-valuenow="{{ ($totalKeluar / $totalTargetKas) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            @php
+                                $progressKeluar = $totalTargetKas > 0 ? ($totalKeluar / $totalTargetKas) * 100 : 0;
+                            @endphp
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $progressKeluar }}%" aria-valuenow="{{ $progressKeluar }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <small class="d-block text-muted mt-2">Progres Pengeluaran Bulan Ini</small>
                     </div>
@@ -79,7 +83,13 @@
                             </div>
                             <i class="bi bi-check-circle fs-2 text-warning"></i>
                         </div>
-                        <small class="d-block text-muted mt-2">Dari total transaksi: {{ number_format(($jumlahTransaksiLunas / ($jumlahTransaksiLunas + $jumlahTransaksiBelumLunas)) * 100, 2) }}%</small>
+                        <small class="d-block text-muted mt-2">
+                            @php
+                                $totalTransaksi = $jumlahTransaksiLunas + $jumlahTransaksiBelumLunas;
+                                $persentaseLunas = $totalTransaksi > 0 ? number_format(($jumlahTransaksiLunas / $totalTransaksi) * 100, 2) : 0;
+                            @endphp
+                            Dari total transaksi: {{ $persentaseLunas }}%
+                        </small>
                     </div>
                 </div>
             </a>
@@ -90,8 +100,8 @@
     <div class="card mt-4">
         <div class="card-body">
             <h5 class="card-title">Grafik Pemasukan dan Pengeluaran</h5>
-            <div style="height: 100px;">
-                <canvas id="kasChart"></canvas>
+            <div style="height: 300px;">
+                <canvas id="kasChart" width="100%" height="300"></canvas>
             </div>
         </div>
     </div>
@@ -106,28 +116,21 @@
         const kasMasuk = @json($totalMasukPerBulan);
         const kasKeluar = @json($totalKeluarPerBulan);
 
-        // Grafik Pemasukan dan Pengeluaran
         const ctx = document.getElementById('kasChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [
                     {
                         label: 'Pemasukan',
                         data: kasMasuk,
-                        borderColor: 'green',
-                        backgroundColor: 'rgba(0, 128, 0, 0.1)',
-                        fill: true,
-                        tension: 0.4
+                        backgroundColor: 'rgba(0, 128, 0, 0.7)'
                     },
                     {
                         label: 'Pengeluaran',
                         data: kasKeluar,
-                        borderColor: 'red',
-                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                        fill: true,
-                        tension: 0.4
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)'
                     }
                 ]
             },
@@ -138,31 +141,14 @@
                     y: {
                         beginAtZero: true
                     }
-                }
-            }
-        });
-
-        // Grafik Transaksi Lunas vs Belum Lunas
-        const transaksiPieChart = document.getElementById('transaksiPieChart').getContext('2d');
-        new Chart(transaksiPieChart, {
-            type: 'pie',
-            data: {
-                labels: ['Lunas', 'Belum Lunas'],
-                datasets: [{
-                    data: [{{ $jumlahTransaksiLunas }}, {{ $jumlahTransaksiBelumLunas }}],
-                    backgroundColor: ['#28a745', '#dc3545'],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
+                },
                 plugins: {
+                    legend: {
+                        position: 'top'
+                    },
                     tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.raw + ' transaksi';
-                            }
-                        }
+                        mode: 'index',
+                        intersect: false
                     }
                 }
             }
