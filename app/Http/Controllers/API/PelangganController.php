@@ -21,18 +21,19 @@ class PelangganController extends Controller
             'username' => 'required|exists:tb_user,username',  // Memastikan username ada di tb_user
         ]);
 
+        // Simpan data pelanggan terlebih dahulu
+        $pelanggan = Pelanggan::create([
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'alamat' => $request->alamat,
+            'no_telp' => $request->no_telp,
+            'paket' => $request->paket,  // Simpan paket sesuai ID
+        ]);
+
         // Ambil ID pengguna berdasarkan username yang terdaftar di tb_user
         $user = \App\Models\Users::where('username', $request->username)->first();
 
-        // Jika pengguna ditemukan, simpan data pelanggan
+        // Jika pengguna ditemukan, simpan ID pelanggan di data pengguna
         if ($user) {
-            $pelanggan = Pelanggan::create([
-                'nama_pelanggan' => $request->nama_pelanggan,
-                'alamat' => $request->alamat,
-                'no_telp' => $request->no_telp,
-                'paket' => $request->paket,  // Simpan paket sesuai ID
-            ]);
-
             // Update hubungan antara pengguna dengan pelanggan
             $user->id_pelanggan = $pelanggan->id_pelanggan;  // Menyimpan id pelanggan di tabel tb_user
             $user->save();
@@ -42,6 +43,7 @@ class PelangganController extends Controller
                 'pelanggan' => $pelanggan,
             ], 201);
         } else {
+            // Jika username tidak ditemukan
             return response()->json([
                 'message' => 'Username tidak ditemukan!',
             ], 404);
