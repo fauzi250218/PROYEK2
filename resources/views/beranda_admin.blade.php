@@ -56,7 +56,7 @@
 
         {{-- Saldo --}}
         <div class="col-md-3 mb-3">
-            <a href="#" class="text-decoration-none" data-bs-toggle="tooltip" title="Saldo saat ini">
+            <a href="{{ route('kas.index') }}" class="text-decoration-none" data-bs-toggle="tooltip" title="Saldo saat ini">
                 <div class="card shadow-sm border-start border-primary border-5">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
