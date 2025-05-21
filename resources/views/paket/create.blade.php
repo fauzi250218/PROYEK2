@@ -29,7 +29,7 @@
         </div>
         <div class="mb-3">
             <label>Harga</label>
-            <input type="number" name="harga" class="form-control" required>
+            <input type="number" name="harga" class="form-control" min="0" required>
         </div>
         <div class="mb-3">
             <label>Kategori</label>

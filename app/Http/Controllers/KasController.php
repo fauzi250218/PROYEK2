@@ -34,8 +34,8 @@ class KasController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'keterangan' => 'required|string',
-            'kas_masuk' => 'nullable|integer',
-            'kas_keluar' => 'nullable|integer',
+            'kas_masuk' => 'nullable|integer|min:0',
+            'kas_keluar' => 'nullable|integer|min:0',
         ]);
 
         Kas::create([
@@ -59,8 +59,8 @@ class KasController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'keterangan' => 'required|string',
-            'kas_masuk' => 'nullable|integer',
-            'kas_keluar' => 'nullable|integer',
+            'kas_masuk' => 'nullable|integer|min:0',
+            'kas_keluar' => 'nullable|integer|min:0',
         ]);
 
         $kas = Kas::findOrFail($id);

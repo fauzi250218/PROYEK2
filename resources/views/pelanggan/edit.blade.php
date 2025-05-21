@@ -46,7 +46,7 @@
                 @foreach($data_paket as $paket)
                     <option value="{{ $paket->id }}"
                         data-harga="{{ $paket->harga }}"
-                        {{ old('paket', $pelanggan->paket_id) == $paket->id ? 'selected' : '' }}>
+                        {{ old('paket', $pelanggan->paket) == $paket->id ? 'selected' : '' }}>
                         {{ $paket->nama_paket }}
                     </option>
                 @endforeach

@@ -3,33 +3,35 @@
 
 @section('content')
 <h2>Data Tagihan</h2>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @if(session('success'))
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Pembayaran Berhasil',
-            text: @json(session('success')),
-            timer: 2000,
-            showConfirmButton: false
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: {!! json_encode(session('success')) !!},
+                timer: 2000,
+                showConfirmButton: false
+            });
         });
     </script>
 @endif
 
 @if(session('error'))
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Pembayaran Gagal',
-            text: @json(session('error')),
-            timer: 2000,
-            showConfirmButton: false
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: {!! json_encode(session('error')) !!},
+                timer: 2000,
+                showConfirmButton: false
+            });
         });
     </script>
 @endif
-
 <form action="{{ route('tagihan.index') }}" method="GET" class="row g-2 align-items-center mb-3">
     <div class="col-auto">
         <select name="bulan" class="form-select">
@@ -40,11 +42,11 @@
         </select>
     </div>
     <div class="col-auto">
-        <select name="tahun" class="form-select">
+        <select name="tahun" class="form-control">
             <option value="">-- Pilih Tahun --</option>
-            @for($thn = now()->year; $thn >= 2020; $thn--)
+            @foreach($tahunList as $thn)
                 <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-            @endfor
+            @endforeach
         </select>
     </div>
     <div class="col-auto">
@@ -67,7 +69,6 @@
             <th>Harga</th>
             <th>Periode</th>
             <th>Status</th>
-            <th>Metode</th>
             <th>Aksi</th>
         </tr>
     </thead>
@@ -86,7 +87,6 @@
                     <span class="badge bg-warning text-dark">Belum Lunas</span>
                 @endif
             </td>
-            <td>{{ $t->metode_pembayaran ?? '-' }}</td>
             <td>
                 @if($t->status == 'Belum Lunas')
                     <form action="{{ route('tagihan.tandaiLunas', $t->id) }}" method="POST" class="d-inline form-tandai-lunas">

@@ -34,7 +34,7 @@ class PaketController extends Controller
         $request->validate([
             'nama_paket' => 'required',
             'kecepatan' => 'required|integer',
-            'harga' => 'required|integer',
+            'harga' => 'required|integer|min:0',
             'kategori' => 'required'
         ]);
 
@@ -56,7 +56,7 @@ class PaketController extends Controller
     $request->validate([
         'nama_paket' => 'required',
         'kecepatan' => 'required|numeric',
-        'harga' => 'required|numeric',
+        'harga' => 'required|numeric|min:0',
         'kategori' => 'required',
     ]);
 

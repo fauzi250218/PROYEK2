@@ -32,12 +32,12 @@
 
         <div class="mb-3">
             <label>Kas Masuk</label>
-            <input type="number" name="kas_masuk" class="form-control" value="{{ $kas->kas_masuk }}">
+            <input type="number" name="kas_masuk" class="form-control" value="{{ $kas->kas_masuk }}" min="0">
         </div>
 
         <div class="mb-3">
             <label>Kas Keluar</label>
-            <input type="number" name="kas_keluar" class="form-control" value="{{ $kas->kas_keluar }}">
+            <input type="number" name="kas_keluar" class="form-control" value="{{ $kas->kas_keluar }}" min="0">
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
