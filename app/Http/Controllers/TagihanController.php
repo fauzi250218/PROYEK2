@@ -13,7 +13,7 @@ use Midtrans\Config;
 
 class TagihanController extends Controller
 {
-    public function index(Request $request)
+        public function index(Request $request)
     {
         $search = $request->search;
         $bulan = $request->bulan;
@@ -24,6 +24,12 @@ class TagihanController extends Controller
             5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
         ];
+
+        // Ambil tahun unik dari data tagihan
+        $tahunList = Tagihan::select('tahun')
+                    ->distinct()
+                    ->orderBy('tahun', 'desc')
+                    ->pluck('tahun');
 
         $tagihans = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])
             ->when($search, fn($query) => 
@@ -39,9 +45,8 @@ class TagihanController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return view('tagihan.index', compact('tagihans', 'namaBulan'));
+        return view('tagihan.index', compact('tagihans', 'namaBulan', 'tahunList'));
     }
-
     public function create()
     {
         $pelanggans = Pelanggan::with('data_paket')->get();
@@ -75,11 +80,14 @@ class TagihanController extends Controller
                 // Kirim WhatsApp
                 if ($pelanggan->no_telp && $pelanggan->user) {
                     $no = preg_replace('/^0/', '62', $pelanggan->no_telp);
-                    $message = "Halo {$pelanggan->user->nama_user}, berikut tagihan Anda:\n"
-                        . "Paket: {$pelanggan->data_paket->nama_paket}\n"
-                        . "Jumlah: Rp" . number_format($pelanggan->data_paket->harga, 0, ',', '.') . "\n"
-                        . "Bulan: {$request->bulan} / {$request->tahun}\n"
-                        . "Status: Belum Lunas";
+                    $message = "🌐 Halo {$pelanggan->user->nama_user}, pelanggan setia *Lilik.net*!\n\n"
+                        . "Berikut ini adalah detail tagihan internet Anda:\n"
+                        . "📦 Paket: {$pelanggan->data_paket->nama_paket}\n"
+                        . "💰 Jumlah: *Rp" . number_format($pelanggan->data_paket->harga, 0, ',', '.') . "*\n"
+                        . "📅 Periode: *{$request->bulan} / {$request->tahun}*\n"
+                        . "📌 Status: *Belum Lunas*\n\n"
+                        . "Mohon segera melakukan pembayaran agar layanan tetap aktif.\n"
+                        . "Terima kasih atas kepercayaan Anda 🙏";
 
                     Http::withHeaders([
                         'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
@@ -114,8 +122,10 @@ class TagihanController extends Controller
 
         if ($tagihan->pelanggan && $tagihan->pelanggan->no_telp) {
             $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-            $message = "Halo {$tagihan->pelanggan->user->nama_user}, pembayaran Anda telah dikonfirmasi.\n"
-                . "Status: Lunas\nTerima kasih 🙏";
+           $message = "✅ Halo {$tagihan->pelanggan->user->nama_user}, pelanggan *Lilik.net*!\n\n"
+            . "Pembayaran Anda telah *berhasil dikonfirmasi* 🎉\n"
+            . "📌 Status Tagihan: *Lunas*\n\n"
+            . "Terima kasih telah membayar tepat waktu. Semoga layanan kami selalu memuaskan!\n🙏";
 
             Http::withHeaders([
                 'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
@@ -138,11 +148,14 @@ class TagihanController extends Controller
         }
 
         $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-        $message = "Halo {$tagihan->pelanggan->user->nama_user}, berikut tagihan Anda:\n"
-            . "Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"
-            . "Jumlah: Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "\n"
-            . "Bulan: {$tagihan->bulan} / {$tagihan->tahun}\n"
-            . "Status: {$tagihan->status}";
+        $message = "🌐 Halo {$tagihan->pelanggan->user->nama_user}, pelanggan *Lilik.net*!\n\n"
+        . "Berikut ini detail tagihan internet Anda:\n"
+        . "📦 Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"
+        . "💰 Jumlah: *Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "*\n"
+        . "📅 Periode: *{$tagihan->bulan} / {$tagihan->tahun}*\n"
+        . "📌 Status: *{$tagihan->status}*\n\n"
+        . "Segera lakukan pembayaran untuk menikmati koneksi tanpa gangguan.\n"
+        . "Terima kasih atas kerjasamanya 🙏";
 
         Http::withHeaders([
             'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
@@ -199,12 +212,15 @@ class TagihanController extends Controller
         }
 
         $no = preg_replace('/^0/', '62', $tagihan->pelanggan->no_telp);
-        $message = "Halo {$tagihan->pelanggan->user->nama_user}, berikut detail tagihan Anda:\n"
-            . "Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"  
-            . "💳 Jumlah: Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "\n"
-            . "📅 Periode: {$tagihan->bulan} / {$tagihan->tahun}\n\n"
-            . "Silakan transfer ke:\n🏦 BCA 123456789 a.n. Admin Lilik.net\n\n"
-            . "Setelah transfer, kirim bukti pembayaran ke admin. Terima kasih 🙏";
+        $message = "💡 Halo {$tagihan->pelanggan->user->nama_user}, pelanggan *Lilik.net*!\n\n"
+        . "Berikut ini adalah rincian tagihan Anda:\n"
+        . "📦 Paket: {$tagihan->pelanggan->data_paket->nama_paket}\n"
+        . "💳 Jumlah Tagihan: *Rp" . number_format($tagihan->jumlah, 0, ',', '.') . "*\n"
+        . "📅 Periode: *{$tagihan->bulan} / {$tagihan->tahun}*\n\n"
+        . "Silakan melakukan pembayaran ke rekening berikut:\n"
+        . "🏦 *BCA 123456789 a.n. Admin Lilik.net*\n\n"
+        . "Setelah transfer, mohon kirim bukti pembayaran kepada admin.\n"
+        . "Layanan Anda akan segera kami aktifkan setelah konfirmasi diterima. 🙏";
 
         $response = Http::withHeaders([
             'Authorization' => '1HcFqZEKiuCvJiK6oAuw'
@@ -281,5 +297,20 @@ class TagihanController extends Controller
     
         return response()->json(['message' => 'Callback handled'], 200);
     }
-    
+
+    public function cetak($id)
+    {
+        $tagihan = Tagihan::with(['pelanggan.user', 'pelanggan.data_paket'])->findOrFail($id);
+
+        $nama = str_replace(' ', '', $tagihan->pelanggan->user->nama_user ?? 'pengguna'); // Hilangkan spasi
+        $bulan = $tagihan->bulan;
+        $tahun = $tagihan->tahun;
+
+        $fileName = 'tagihan-' . $nama . '-' . $bulan . '-' . $tahun . '.pdf';
+
+        $pdf = Pdf::loadView('tagihan.cetak', compact('tagihan'));
+
+        return $pdf->stream($fileName);
+    }
+
 }

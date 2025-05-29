@@ -24,11 +24,11 @@
         </div>
         <div class="mb-3">
             <label for="kas_masuk" class="form-label">Kas Masuk</label>
-            <input type="number" name="kas_masuk" class="form-control">
+            <input type="number" name="kas_masuk" class="form-control" min="0">
         </div>
         <div class="mb-3">
             <label for="kas_keluar" class="form-label">Kas Keluar</label>
-            <input type="number" name="kas_keluar" class="form-control">
+            <input type="number" name="kas_keluar" class="form-control" min="0">
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{{ route('kas.index') }}" class="btn btn-secondary">Kembali</a>
