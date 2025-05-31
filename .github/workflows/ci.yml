@@ -13,9 +13,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: polindra
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: lilik.net
           MYSQL_USER: root
+          MYSQL_PASSWORD: polindra
         ports:
           - 3306:3306
         options: >-
