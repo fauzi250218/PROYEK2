@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_pelanggan');
             $table->string('bulan', 2); // Contoh: 04
             $table->string('tahun', 4); // Contoh: 2025
-            $table->enum('status_bayar', ['lunas', 'belum'])->default('belum');
+            $table->enum('status', ['Lunas', 'Belum Lunas'])->default('Belum Lunas');
             $table->integer('total')->nullable(); // Tagihan dalam angka, bisa ambil dari paket
             $table->timestamps();
 
