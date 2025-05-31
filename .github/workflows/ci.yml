@@ -98,7 +98,7 @@ jobs:
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
-        port: 64000
+        port: 22
 
     - name: Deploy to server via SCP/SSH
       run: |
