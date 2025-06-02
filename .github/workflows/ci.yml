@@ -18,7 +18,7 @@ jobs:
           MYSQL_USER: polindra
           MYSQL_PASSWORD: polindra
         ports:
-          - 3307:3306
+          - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping -p$$MYSQL_ROOT_PASSWORD"
           --health-interval 10s
@@ -70,7 +70,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3307
+          DB_PORT: 3306
           DB_DATABASE: laracicd
           DB_USERNAME: polindra
           DB_PASSWORD: polindra
@@ -80,7 +80,7 @@ jobs:
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3307
+          DB_PORT: 3306
           DB_DATABASE: laracicd
           DB_USERNAME: polindra
           DB_PASSWORD: polindra
