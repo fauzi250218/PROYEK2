@@ -1,112 +1,58 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Invoice Tagihan</title>
+    <title>Cetak Tagihan</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f6f8;
-        }
-
-        .invoice-container {
-            max-width: 800px;
-            margin: 40px auto;
+            margin: 40px;
             background: #fff;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 10px;
+            color: #2c3e50;
         }
-
-        .header-title {
+        h2 {
             text-align: center;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 16px;
             margin-bottom: 30px;
+            font-size: 26px;
+            color: #1f4e79;
         }
-
-        .header-title h2 {
-            margin: 0;
-            color: #007bff;
-            font-size: 28px;
+        .invoice-box {
+            max-width: 750px;
+            margin: auto;
+            border: 2px solid #1f4e79;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-
-        .header-title p {
-            margin: 4px 0 0;
-            color: #555;
-            font-size: 14px;
-        }
-
-        .info-table {
+        table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
-
-        .info-table th, .info-table td {
-            padding: 14px 16px;
-            border: 1px solid #ddd;
-            font-size: 15px;
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #b0c4de;
         }
-
-        .info-table th {
-            background-color: #007bff;
-            color: white;
+        th {
+            background-color: #e6f0fa;
             text-align: left;
             width: 35%;
+            color: #1f4e79;
         }
-
-        .status-label {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 14px;
-            color: white;
+        td {
+            background-color: #f9fbfd;
         }
-
-        .lunas {
-            background-color: #28a745;
-        }
-
-        .belum {
-            background-color: #dc3545;
-        }
-
         .footer {
             margin-top: 40px;
             text-align: center;
-            font-size: 13px;
-            color: #666;
-        }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .invoice-container {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-            }
-
-            .footer {
-                display: none;
-            }
+            font-size: 12px;
+            color: #777;
         }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <div class="header-title">
-            <h2>Invoice Tagihan</h2>
-            <p>{{ now()->format('d F Y, H:i') }}</p>
-        </div>
-
-        <table class="info-table">
+    <div class="invoice-box">
+        <h2>Tagihan Pelanggan <br>Lilik.Net</h2>
+        <table>
             <tr>
                 <th>Nama</th>
                 <td>{{ $tagihan->pelanggan->user->nama_user ?? '-' }}</td>
@@ -125,17 +71,11 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>
-                    <span class="status-label {{ strtolower($tagihan->status) === 'lunas' ? 'lunas' : 'belum' }}">
-                        {{ ucfirst($tagihan->status) }}
-                    </span>
-                </td>
+                <td>{{ $tagihan->status }}</td>
             </tr>
         </table>
-
         <div class="footer">
-            Terima kasih telah menggunakan layanan internet kami.<br>
-            Jika ada pertanyaan, silakan hubungi admin melalui WhatsApp.
+            Lilik.Net - Sistem Manajemen Tagihan &copy; {{ date('Y') }}
         </div>
     </div>
 </body>

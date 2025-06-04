@@ -20,5 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', [PenggunaController::class, 'use
 // API Pendaftaran Paket Pelanggan
 Route::post('/daftar-paket', [PelangganController::class, 'store']);  // Menangani pendaftaran paket pelanggan
 
-Route::get('/tagihan', [TagihanApiController::class, 'index']); // Menampilkan semua tagihan
-Route::get('/tagihan/{id}', [TagihanApiController::class, 'show']); // Menampilkan tagihan berdasarkan ID pelanggan
+Route::prefix('tagihan')->group(function () {
+    Route::get('/', [TagihanApiController::class, 'index']);               // List tagihan (opsional filter id_pelanggan)
+    Route::get('/{id}', [TagihanApiController::class, 'show']);           // Detail tagihan by id
+    Route::post('/{id}/payment-token', [TagihanApiController::class, 'createPaymentToken']); // Generate midtrans snap token untuk bayar
+
+    // Endpoint webhook midtrans notification (pastikan tidak butuh auth)
+    Route::post('/midtrans/notification', [TagihanApiController::class, 'midtransNotification']);
+});

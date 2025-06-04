@@ -3,37 +3,50 @@
 
 @section('content')
 <h2>Data Tagihan</h2>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @if(session('success'))
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: @json(session('success')),
-            timer: 2000,
-            showConfirmButton: false
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: {!! json_encode(session('success')) !!},
+                timer: 2000,
+                showConfirmButton: false
+            });
         });
     </script>
 @endif
 
+@if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: {!! json_encode(session('error')) !!},
+                timer: 2000,
+                showConfirmButton: false
+            });
+        });
+    </script>
+@endif
 <form action="{{ route('tagihan.index') }}" method="GET" class="row g-2 align-items-center mb-3">
     <div class="col-auto">
         <select name="bulan" class="form-select">
             <option value="">-- Pilih Bulan --</option>
             @foreach($namaBulan as $bln => $nama)
-                <option value="{{ $bln }}" {{ request('bulan') == $bln ? 'selected' : '' }}>
-                    {{ $nama }}
-                </option>
+                <option value="{{ $bln }}" {{ request('bulan') == $bln ? 'selected' : '' }}>{{ $nama }}</option>
             @endforeach
         </select>
     </div>
     <div class="col-auto">
-        <select name="tahun" class="form-select">
+        <select name="tahun" class="form-control">
             <option value="">-- Pilih Tahun --</option>
-            @for($thn = now()->year; $thn >= 2020; $thn--)
+            @foreach($tahunList as $thn)
                 <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-            @endfor
+            @endforeach
         </select>
     </div>
     <div class="col-auto">
@@ -54,8 +67,7 @@
             <th>Nama</th>
             <th>Paket</th>
             <th>Harga</th>
-            <th>Bulan</th>
-            <th>Tahun</th>
+            <th>Periode</th>
             <th>Status</th>
             <th>Aksi</th>
         </tr>
@@ -67,8 +79,7 @@
             <td>{{ optional(optional($t->pelanggan)->user)->nama_user ?? '-' }}</td>
             <td>{{ optional(optional($t->pelanggan)->data_paket)->nama_paket ?? '-' }}</td>
             <td>Rp{{ number_format($t->jumlah, 0, ',', '.') }}</td>
-            <td>{{ $namaBulan[$t->bulan] ?? $t->bulan }}</td>
-            <td>{{ $t->tahun }}</td>
+            <td>{{ ($namaBulan[$t->bulan] ?? $t->bulan) . ' ' . $t->tahun }}</td>
             <td>
                 @if($t->status == 'Lunas')
                     <span class="badge bg-success">Lunas</span>
@@ -85,8 +96,26 @@
                     </form>
                 @endif
                 <a href="{{ route('tagihan.cetak', $t->id) }}" class="btn btn-secondary btn-sm" target="_blank">Cetak</a>
-                <a href="{{ route('tagihan.kirimwa', $t->id) }}" class="btn btn-info btn-sm" target="_blank">Kirim WA</a>
-            </td>
+                
+                <!-- Hanya tampilkan tombol Bayar jika status tagihan 'Belum Lunas' -->
+                @if($t->status == 'Belum Lunas')
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bayar
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('tagihan.manual', $t->id) }}">Bayar Manual (WA)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('tagihan.midtrans', $t->id) }}">Bayar Otomatis</a>
+                        </li>
+                    </ul>
+                </div>                
+                @endif
+            
+                <a href="{{ route('tagihan.kirimwa', $t->id) }}" class="btn btn-info btn-sm">Kirim WA</a>
+            </td>            
         </tr>
         @empty
         <tr>

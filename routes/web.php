@@ -49,4 +49,8 @@ Route::post('/tagihan', [TagihanController::class, 'store'])->name('tagihan.stor
 Route::patch('/tagihan/{id}/status', [TagihanController::class, 'updateStatus'])->name('tagihan.tandaiLunas');
 Route::get('tagihan/{id}/cetak', [TagihanController::class, 'cetak'])->name('tagihan.cetak');
 Route::get('/tagihan/{id}/kirimwa', [TagihanController::class, 'kirimwa'])->name('tagihan.kirimwa');
-
+Route::get('/tagihan/{id}/midtrans', [TagihanController::class, 'payWithMidtrans'])->name('tagihan.midtrans');
+Route::get('/tagihan/{id}/bayar/sukses', [TagihanController::class, 'updateStatus'])->name('tagihan.bayar.sukses');
+Route::post('/midtrans-notification', [TagihanController::class, 'midtransNotification']);
+Route::get('/tagihan/bayar-manual/{id}', [TagihanController::class, 'bayarManual'])->name('tagihan.manual');
+Route::post('/midtrans/callback', [TagihanController::class, 'handleCallback']);
